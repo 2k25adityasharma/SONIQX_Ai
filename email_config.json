@@ -1,0 +1,8 @@
+{
+  "smtp_service": "gmail",
+  "smtp_host": "smtp.gmail.com",
+  "smtp_port": 465,
+  "smtp_secure": true,
+  "smtp_user": "soniqx.earhealth.report@gmail.com",
+  "smtp_pass": "rdlk zjgd lowl uexi"
+}

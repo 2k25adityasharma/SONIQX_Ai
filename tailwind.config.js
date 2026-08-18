@@ -1,0 +1,113 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: 'class',
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        background: '#0a0a0a',
+        surface: '#121417',
+        'surface-container': '#121417',
+        'surface-container-high': '#2a2a2a',
+        'surface-container-low': '#1c1b1b',
+        'surface-container-highest': '#353534',
+        'surface-container-lowest': '#050505',
+        'surface-bright': '#3a3939',
+        primary: '#f2ca50',
+        'primary-container': '#d4af37',
+        'on-primary-container': '#000000',
+        'on-background': '#e5e2e1',
+        'on-surface': '#ffffff',
+        'on-surface-variant': '#d0c5af',
+        outline: '#4a4a4a',
+        'outline-variant': '#4d4635',
+        soniqx: {
+          darkBg: '#0a0a0a',
+          darkSurface: '#0f1114',
+          darkCard: '#121417',
+          darkElevated: '#1a1d20',
+          darkBorder: 'rgba(212, 175, 55, 0.22)',
+          darkText: '#ffffff',
+          darkMuted: '#d0c5af',
+          lightBg: '#F1EEE7',
+          lightSurface: '#F8F6F1',
+          lightCard: '#FFFFFF',
+          lightElevated: '#F5F2EA',
+          lightBorder: 'rgba(30, 30, 30, 0.14)',
+          lightText: '#171717',
+          lightMuted: '#5F5A50',
+          gold: '#d4af37',
+          goldBright: '#f2ca50',
+          goldDeep: '#937318',
+          goldSoft: 'rgba(212, 175, 55, 0.18)',
+          goldGlow: 'rgba(212, 175, 55, 0.12)',
+        }
+      },
+      spacing: {
+        'margin-mobile': '20px',
+        gutter: '24px',
+        'section-gap': '120px',
+        'margin-desktop': '64px',
+        unit: '4px',
+        'container-max': '1440px'
+      },
+      fontFamily: {
+        'space': ['"Space Grotesk"', 'sans-serif'],
+        'mono': ['"JetBrains Mono"', 'monospace'],
+        'serif': ['"Playfair Display"', 'Georgia', 'serif'],
+        'inter': ['"Inter"', 'sans-serif'],
+        'button-text': ['"JetBrains Mono"', 'monospace'],
+        'headline-md': ['"Playfair Display"', 'Georgia', 'serif'],
+        'body-lg': ['"Inter"', 'sans-serif'],
+        'display-lg-mobile': ['"Playfair Display"', 'Georgia', 'serif'],
+        'label-caps': ['"JetBrains Mono"', 'monospace'],
+        'display-lg': ['"Playfair Display"', 'Georgia', 'serif'],
+        'body-md': ['"Inter"', 'sans-serif'],
+        'headline-sm': ['"Playfair Display"', 'Georgia', 'serif'],
+        'technical-data': ['"JetBrains Mono"', 'monospace']
+      },
+      fontSize: {
+        'button-text': ['13px', { lineHeight: '1.0', letterSpacing: '0.05em', fontWeight: '600' }],
+        'headline-md': ['32px', { lineHeight: '1.3', fontWeight: '600' }],
+        'body-lg': ['18px', { lineHeight: '1.6', fontWeight: '400' }],
+        'display-lg-mobile': ['40px', { lineHeight: '1.2', fontWeight: '700' }],
+        'label-caps': ['12px', { lineHeight: '1.0', letterSpacing: '0.15em', fontWeight: '500' }],
+        'display-lg': ['64px', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'body-md': ['16px', { lineHeight: '1.6', fontWeight: '400' }],
+        'headline-sm': ['24px', { lineHeight: '1.4', fontWeight: '600' }],
+        'technical-data': ['14px', { lineHeight: '1.4', fontWeight: '400' }]
+      },
+      animation: {
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4,0,0.6,1) infinite',
+        'spin-slow': 'spin 12s linear infinite',
+        'float': 'float 4s ease-in-out infinite',
+        'sway': 'sway 6s ease-in-out infinite',
+        'slide-in-up': 'slideInUp 0.5s ease-out forwards',
+        'bounce-subtle': 'bounceSubtle 1.5s ease-in-out infinite',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-8px)' },
+        },
+        sway: {
+          '0%, 100%': { transform: 'rotate(-2deg)' },
+          '50%': { transform: 'rotate(2deg)' },
+        },
+        slideInUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        bounceSubtle: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-4px)' },
+        },
+      },
+      boxShadow: {
+        'gold-glow': '0 0 35px rgba(212, 175, 55, 0.15)',
+        'gold-soft': '0 4px 20px rgba(212, 175, 55, 0.20)',
+      },
+    },
+  },
+  plugins: [],
+}
