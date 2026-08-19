@@ -403,12 +403,7 @@ Error generating stack: `+a.message+`
         p.jsx(kr, {
           to: "/",
           className: "flex items-center gap-2 shrink-0 navbar-logo",
-          children: p.jsxs(p.Fragment, {
-            children: [
-              p.jsx("div", { className: "hidden md:block", children: p.jsx(Iw, { variant: "desktop", theme: a }) }),
-              p.jsx("div", { className: "block md:hidden", children: p.jsx(Iw, { variant: "compact", theme: a }) })
-            ]
-          })
+          children: p.jsx(Iw, { variant: "desktop", theme: a })
         }),
         p.jsxs("div", {
           className: "hidden md:flex items-center space-x-6 pl-6 navbar-desktop-links",

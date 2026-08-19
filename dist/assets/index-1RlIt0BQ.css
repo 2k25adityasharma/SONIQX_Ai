@@ -70,11 +70,6 @@ html.focus-assist .content-layer > footer:hover {
     box-sizing: border-box !important;
   }
 
-  /* Prevent tracking/letter-spacing overflow on mobile */
-  [class*="tracking-"] {
-    letter-spacing: 0.08em !important;
-  }
-
   /* Responsive Header Text Sizing */
   .text-4xl, .text-6xl, .sm\:text-6xl, .md\:text-7xl {
     font-size: 1.65rem !important;
@@ -368,6 +363,14 @@ aside[aria-label="SONIQX AI Companion"].ai-modal-expanded {
 /* ==========================================================================
    NAVBAR HEADER MOBILE RESPONSIVENESS (@media (max-width: 768px))
    ========================================================================== */
+.navbar-logo,
+.navbar-logo div,
+.navbar-logo svg,
+.navbar-logo text,
+svg[aria-label*="SONIQX"] text {
+  letter-spacing: initial !important;
+}
+
 @media (max-width: 768px) {
   nav.soniqx-navbar,
   nav.sticky {
@@ -392,11 +395,18 @@ aside[aria-label="SONIQX AI Companion"].ai-modal-expanded {
   }
 
   .navbar-logo,
-  .navbar-logo div,
-  .navbar-logo svg {
-    max-width: 155px !important;
-    height: auto !important;
+  .navbar-logo div {
+    display: flex !important;
+    align-items: center !important;
+    max-width: 175px !important;
     flex-shrink: 0 !important;
+  }
+
+  .navbar-logo svg {
+    width: 175px !important;
+    max-width: 175px !important;
+    height: auto !important;
+    display: block !important;
   }
 
   .navbar-desktop-links {
@@ -416,6 +426,7 @@ aside[aria-label="SONIQX AI Companion"].ai-modal-expanded {
     font-size: 11px !important;
   }
 }
+
 
 
 
