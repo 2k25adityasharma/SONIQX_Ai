@@ -1,35 +1,5 @@
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const nodemailer = require('nodemailer');
+// Vercel Serverless Function Endpoint for SONIQX AI Chat (/api/ai-chat)
 
-const PORT = process.env.PORT || 5000;
-const DIST_DIR = path.join(__dirname, 'dist');
-const CONFIG_PATH = path.join(__dirname, 'email_config.json');
-
-// MIME types lookup
-const MIME_TYPES = {
-    '.html': 'text/html; charset=UTF-8',
-    '.css': 'text/css',
-    '.js': 'text/javascript',
-    '.cjs': 'text/javascript',
-    '.mjs': 'text/javascript',
-    '.json': 'application/json',
-    '.png': 'image/png',
-    '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg',
-    '.gif': 'image/gif',
-    '.svg': 'image/svg+xml',
-    '.ico': 'image/x-icon',
-    '.wav': 'audio/wav',
-    '.mp4': 'video/mp4',
-    '.pdf': 'application/pdf',
-    '.woff': 'font/woff',
-    '.woff2': 'font/woff2',
-    '.ttf': 'font/ttf'
-};
-
-// Language map for display names
 const LANGUAGE_NAMES = {
     en: 'English',
     es: 'Spanish (Español)',
@@ -40,7 +10,6 @@ const LANGUAGE_NAMES = {
     zh: 'Chinese (中文)'
 };
 
-// Off-topic redirection messages in all 7 supported languages
 const OFF_TOPIC_MESSAGES = {
     en: "I'm SONIQX AI, focused on hearing, audiology, and the SONIQX screening experience. Please ask me something related to hearing or your test.",
     hi: "मैं SONIQX AI हूँ, जो सुनवाई, ऑडियोलॉजी और SONIQX स्क्रीनिंग अनुभव पर केंद्रित है। कृपया मुझसे सुनवाई या आपके टेस्ट से संबंधित कोई सवाल पूछें।",
@@ -51,7 +20,6 @@ const OFF_TOPIC_MESSAGES = {
     zh: "我是 SONIQX AI，专注于听力、听力学和 SONIQX 筛查体验。请向我提出与听力或您的测试相关的问题。"
 };
 
-// Friendly localized error messages for all 7 supported languages
 const ERROR_MESSAGES = {
     en: "Sorry, I couldn't connect to SONIQX AI right now. Please try again.",
     hi: "क्षमा करें, SONIQX AI से अभी कनेक्ट नहीं हो पाया। कृपया फिर से प्रयास करें।",
@@ -62,7 +30,6 @@ const ERROR_MESSAGES = {
     zh: "抱歉，目前无法连接到 SONIQX AI。请重试。"
 };
 
-// Pre-cached localized answers for the 4 Quick Clinical Questions across all 7 languages (Medium Depth ~100-150 words)
 const PREDEFINED_ANSWERS = {
     how_it_works: {
         en: "Digital pure-tone audiometry plays calibrated sound tones across 500 Hz to 8000 Hz speech frequencies directly into your headphones. Whenever you hear a tone, click or tap the screen button.\n\nThe system measures the quietest sound level (hearing threshold) you can perceive at each frequency for both your left and right ears independently.\n\nOnce completed, the platform generates a detailed pure-tone audiogram graph showing your hearing threshold curve across low, mid, and high frequencies.",
@@ -85,7 +52,7 @@ const PREDEFINED_ANSWERS = {
     privacy: {
         en: "Yes, your privacy and health data security are fully protected on the SONIQX platform.\n\nYour hearing screening results and threshold data are securely encrypted and saved locally on your device storage. We do not store or sell your clinical data on external public servers.\n\nAll screening analytics remain strictly confidential and under your direct personal control at all times.",
         hi: "जी हां, SONIQX प्लेटफॉर्म पर आपकी गोपनीयता और स्वास्थ्य डेटा पूरी तरह सुरक्षित हैं।\n\nआपकी सुनवाई जांच के परिणाम और आंकड़े सुरक्षित रूप से एन्क्रिप्टेड (Encrypted) रहते हैं और केवल आपके डिवाइस पर ही संग्रहीत होते हैं। हम आपका डेटा किसी सार्वजनिक सर्वर पर स्टोर या शेयर नहीं करते।\n\nआपके सभी मेडिकल आंकड़े हमेशा 100% गोपनीय और आपके पूर्ण नियंत्रण में रहते हैं।",
-        es: "Sí, su privacidad y la seguridad de sus datos de salud están completamente garantizadas en la plataforma SONIQX.\n\nSus resultados de detección y datos de umbral se cifran de forma segura y se guardan localmente en su dispositivo. No vendemos ni compartimos sus datos con terceros.\n\nToda su información clínica permanece estrictamente confidencial y bajo su control personal en todo momento.",
+        es: "Sí, su privacidad y la seguridad de sus datos de salud están completamente garantizadas en la plataforma SONIQX.\n\nSus resultados de detección y datos de umbral se cifran de forma segura y se guardan localmente en su dispositivo. No vendemos ni compartimos sus datos con terceros.\n\nToda su información clínica permanece strictly confidencial y bajo su control personal en todo momento.",
         fr: "Oui, votre confidentialité et la sécurité de vos données de santé sont pleinement garanties sur la plateforme SONIQX.\n\nVos résultats de dépistage et données de seuil sont chiffrés et stockés localement sur votre appareil. Nous ne vendons ni ne partageons vos données médicales avec des tiers.\n\nToutes vos informations cliniques restent strictement confidentielles et sous votre contrôle direct.",
         de: "Ja, Ihre Privatsphäre und Datensicherheit sind auf der SONIQX-Plattform vollständig geschützt.\n\nIhre Testergebnisse und Hörschwellendaten werden sicher verschlüsselt und lokal auf Ihrem Gerät gespeichert. Wir geben Ihre medizinischen Daten nicht an Dritte weiter.\n\nAlle Screening-Daten bleiben streng vertraulich und unter Ihrer persönlichen Kontrolle.",
         ja: "はい、SONIQXプラットフォームにおけるお客様のプライバシーとデータセキュリティは完全に保護されています。\n\n聴力検査結果および閾値データは暗号化され、お使いのデバイス内にローカル保存されます。外部サーバーへ販売・共有されることはありません。\n\nすべての検査データは常に厳重に機密保持され、お客様ご自身の管理下に置かれます。",
@@ -166,122 +133,62 @@ function isOffTopicQuestion(cleanQ) {
     return false;
 }
 
-function getSMTPConfig() {
-    let config = {
-        smtp_service: 'gmail',
-        smtp_host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        smtp_port: parseInt(process.env.SMTP_PORT || '465', 10),
-        smtp_secure: true,
-        smtp_user: process.env.SMTP_USER || '',
-        smtp_pass: process.env.SMTP_PASS || '',
-        ai_api_key: ''
-    };
-
-    if (fs.existsSync(CONFIG_PATH)) {
-        try {
-            const fileData = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
-            config = { ...config, ...fileData };
-        } catch (err) {}
-    }
-
-    if (process.env.SMTP_USER) config.smtp_user = process.env.SMTP_USER;
-    if (process.env.SMTP_PASS) config.smtp_pass = process.env.SMTP_PASS;
-    if (process.env.AI_API_KEY) config.ai_api_key = process.env.AI_API_KEY;
-    if (process.env.GEMINI_API_KEY) config.ai_api_key = process.env.GEMINI_API_KEY;
-
-    return config;
-}
-
-function createTransporter(config) {
-    if (config.smtp_service === 'gmail') {
-        return nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: config.smtp_user,
-                pass: config.smtp_pass
-            }
-        });
-    }
-
-    return nodemailer.createTransport({
-        host: config.smtp_host || 'smtp.gmail.com',
-        port: config.smtp_port || 465,
-        secure: config.smtp_secure !== undefined ? config.smtp_secure : true,
-        auth: {
-            user: config.smtp_user,
-            pass: config.smtp_pass
-        }
-    });
-}
-
-const server = http.createServer(async (req, res) => {
+module.exports = async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
-        res.writeHead(204);
-        return res.end();
+        return res.status(204).end();
     }
 
-    if (req.url === '/api/ai-chat' && req.method === 'POST') {
-        let body = '';
-        req.on('data', chunk => {
-            body += chunk.toString();
-            if (body.length > 1024 * 1024) req.destroy();
-        });
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
+    }
 
-        req.on('end', async () => {
+    try {
+        const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+        const { question = '', mode = 'adult', language = 'en' } = body;
+        const cleanQ = (question || '').trim();
+        const validLang = LANGUAGE_NAMES[language] ? language : 'en';
+        const targetLangName = LANGUAGE_NAMES[validLang];
+
+        const offTopicRedirectMsg = OFF_TOPIC_MESSAGES[validLang] || OFF_TOPIC_MESSAGES.en;
+        const genericErrMsg = ERROR_MESSAGES[validLang] || ERROR_MESSAGES.en;
+
+        if (!cleanQ) {
+            return res.status(200).json({
+                success: true,
+                answer: offTopicRedirectMsg
+            });
+        }
+
+        const cachedAnswer = getPrecachedQuickQuestionAnswer(cleanQ, validLang);
+        if (cachedAnswer) {
+            return res.status(200).json({
+                success: true,
+                answer: cachedAnswer,
+                source: 'cache'
+            });
+        }
+
+        if (isOffTopicQuestion(cleanQ)) {
+            return res.status(200).json({
+                success: true,
+                answer: offTopicRedirectMsg,
+                isOffTopic: true,
+                source: 'guardrail'
+            });
+        }
+
+        const activeApiKey = process.env.AI_API_KEY || process.env.GEMINI_API_KEY || "";
+
+        let aiAnswer = '';
+
+        if (activeApiKey) {
             try {
-                const { question = '', mode = 'adult', language = 'en' } = JSON.parse(body || '{}');
-                const cleanQ = (question || '').trim();
-                const validLang = LANGUAGE_NAMES[language] ? language : 'en';
-                const targetLangName = LANGUAGE_NAMES[validLang];
-
-                const offTopicRedirectMsg = OFF_TOPIC_MESSAGES[validLang] || OFF_TOPIC_MESSAGES.en;
-                const genericErrMsg = ERROR_MESSAGES[validLang] || ERROR_MESSAGES.en;
-
-                if (!cleanQ) {
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
-                    return res.end(JSON.stringify({
-                        success: true,
-                        answer: offTopicRedirectMsg
-                    }));
-                }
-
-                const cachedAnswer = getPrecachedQuickQuestionAnswer(cleanQ, validLang);
-                if (cachedAnswer) {
-                    console.log(`[SONIQX AI] Quick Question Cache Hit (${validLang}): "${cleanQ.substring(0, 35)}..."`);
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
-                    return res.end(JSON.stringify({
-                        success: true,
-                        answer: cachedAnswer,
-                        source: 'cache'
-                    }));
-                }
-
-                if (isOffTopicQuestion(cleanQ)) {
-                    console.log(`[SONIQX AI Guardrail] Off-topic request redirected (${validLang}): "${cleanQ}"`);
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
-                    return res.end(JSON.stringify({
-                        success: true,
-                        answer: offTopicRedirectMsg,
-                        isOffTopic: true,
-                        source: 'guardrail'
-                    }));
-                }
-
-                const config = getSMTPConfig();
-                const activeApiKey = process.env.AI_API_KEY || process.env.GEMINI_API_KEY || config.ai_api_key || "";
-
-                let aiAnswer = '';
-
-                if (activeApiKey) {
-                    try {
-                        console.log(`[SONIQX AI Gemini Call] Dispatching request in ${targetLangName}...`);
-                        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${activeApiKey}`;
-                        
-                        const systemInstructionText = `You are SONIQX AI, a specialized digital audiology and hearing-screening assistant.
+                const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${activeApiKey}`;
+                const systemInstructionText = `You are SONIQX AI, a specialized digital audiology and hearing-screening assistant.
 
 Your purpose is to help users understand the SONIQX hearing-screening experience, audiology concepts, hearing frequencies, tone calibration, headphones, hearing thresholds, test procedures, results, privacy, and related hearing-health education.
 
@@ -312,234 +219,45 @@ Do not diagnose medical conditions.
 Do not claim that a user definitely has hearing loss or another medical condition based only on a screening result.
 When appropriate, recommend consultation with a qualified audiologist or healthcare professional.`;
 
-                        const apiStartTime = Date.now();
-                        const response = await fetch(geminiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                system_instruction: { parts: [{ text: systemInstructionText }] },
-                                contents: [{ parts: [{ text: cleanQ }] }],
-                                generationConfig: {
-                                    maxOutputTokens: 2048,
-                                    temperature: 0.3,
-                                    topP: 0.9
-                                }
-                            })
-                        });
-
-                        const data = await response.json();
-                        const latency = Date.now() - apiStartTime;
-                        console.log(`[SONIQX AI Gemini Call] Status ${response.status} in ${latency}ms`);
-
-                        if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-                            aiAnswer = data.candidates[0].content.parts.map(p => p.text).join('').trim();
-                        } else if (data && data.error) {
-                            console.error('[SONIQX AI Gemini Error]', data.error.code, data.error.message);
+                const response = await fetch(geminiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        system_instruction: { parts: [{ text: systemInstructionText }] },
+                        contents: [{ parts: [{ text: cleanQ }] }],
+                        generationConfig: {
+                            maxOutputTokens: 2048,
+                            temperature: 0.3,
+                            topP: 0.9
                         }
-                    } catch (gErr) {
-                        console.error('[SONIQX AI Gemini Exception]', gErr.message);
-                    }
-                }
+                    })
+                });
 
-                if (!aiAnswer) {
-                    aiAnswer = genericErrMsg;
+                const data = await response.json();
+                if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+                    aiAnswer = data.candidates[0].content.parts.map(p => p.text).join('').trim();
                 }
-
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({
-                    success: true,
-                    answer: aiAnswer,
-                    mode: mode,
-                    language: validLang,
-                    source: activeApiKey ? 'gemini_api' : 'fallback'
-                }));
-            } catch (err) {
-                console.error('[SONIQX AI Chat API Error]', err.message);
-                const defaultErr = ERROR_MESSAGES.en;
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({
-                    success: true,
-                    answer: defaultErr
-                }));
+            } catch (gErr) {
+                console.error('[Vercel Serverless SONIQX AI Exception]', gErr.message);
             }
-        });
-        return;
-    }
-
-    if (req.url === '/api/send-email' && req.method === 'POST') {
-        let body = '';
-        req.on('data', chunk => {
-            body += chunk.toString();
-            if (body.length > 25 * 1024 * 1024) req.destroy();
-        });
-
-        req.on('end', async () => {
-            try {
-                const data = JSON.parse(body);
-                const {
-                    recipientEmail,
-                    userName = 'Patient',
-                    reportId = 'SHS-2026-9041',
-                    date = new Date().toLocaleDateString(),
-                    overallStatus = 'PASS',
-                    notes = '',
-                    pdfBase64,
-                    fileName
-                } = data;
-
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!recipientEmail || typeof recipientEmail !== 'string' || !emailRegex.test(recipientEmail.trim())) {
-                    res.writeHead(400, { 'Content-Type': 'application/json' });
-                    return res.end(JSON.stringify({
-                        success: false,
-                        error: `Invalid email address format: "${recipientEmail || ''}". Please enter a valid email address.`
-                    }));
-                }
-
-                const cleanRecipient = recipientEmail.trim();
-                if (!pdfBase64) {
-                    res.writeHead(400, { 'Content-Type': 'application/json' });
-                    return res.end(JSON.stringify({
-                        success: false,
-                        error: 'Missing PDF report data. Unable to generate attachment.'
-                    }));
-                }
-
-                let cleanBase64 = pdfBase64;
-                if (cleanBase64.includes(',')) {
-                    cleanBase64 = cleanBase64.split(',')[1];
-                }
-                const pdfBuffer = Buffer.from(cleanBase64, 'base64');
-                const reportFileName = fileName || `Audiometry_Report_${userName.replace(/\s+/g, '_')}_${reportId}.pdf`;
-
-                const smtpConfig = getSMTPConfig();
-
-                const htmlContent = `
-                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0f172a; color: #f8fafc; border-radius: 16px; padding: 24px; border: 1px solid #334155;">
-                    <div style="text-align: center; padding-bottom: 20px; border-bottom: 1px solid #1e293b;">
-                        <h1 style="color: #f59e0b; margin: 0; font-size: 24px; letter-spacing: 1px;">SONIQX</h1>
-                        <p style="color: #94a3b8; margin: 4px 0 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">Precision Digital Audiology Platform</p>
-                    </div>
-
-                    <div style="padding: 20px 0;">
-                        <h2 style="color: #ffffff; font-size: 18px; margin-top: 0;">Official Clinical Hearing Screening Report</h2>
-                        <p style="color: #cbd5e1; font-size: 14px; line-height: 1.6;">Dear <strong>${userName}</strong>,</p>
-                        <p style="color: #cbd5e1; font-size: 14px; line-height: 1.6;">Please find attached your official digital audiometry screening report PDF generated by the SONIQX Audiology Platform.</p>
-
-                        <div style="background-color: #1e293b; border-radius: 12px; padding: 16px; margin: 20px 0; border: 1px solid #334155;">
-                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                                <tr>
-                                    <td style="color: #94a3b8; padding: 6px 0;">Report ID:</td>
-                                    <td style="color: #f8fafc; font-weight: bold; padding: 6px 0; text-align: right;">${reportId}</td>
-                                </tr>
-                                <tr>
-                                    <td style="color: #94a3b8; padding: 6px 0;">Screening Date:</td>
-                                    <td style="color: #f8fafc; font-weight: bold; padding: 6px 0; text-align: right;">${date}</td>
-                                </tr>
-                                <tr>
-                                    <td style="color: #94a3b8; padding: 6px 0;">Patient Name:</td>
-                                    <td style="color: #f8fafc; font-weight: bold; padding: 6px 0; text-align: right;">${userName}</td>
-                                </tr>
-                                <tr>
-                                    <td style="color: #94a3b8; padding: 6px 0;">Screening Status:</td>
-                                    <td style="padding: 6px 0; text-align: right;">
-                                        <span style="display: inline-block; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 12px; ${overallStatus === 'PASS' ? 'background-color: #064e3b; color: #34d399;' : 'background-color: #831843; color: #f472b6;'}">
-                                            ${overallStatus}
-                                        </span>
-                                    </td>
-                                </tr>
-                                ${notes ? `
-                                <tr>
-                                    <td style="color: #94a3b8; padding: 6px 0;">Clinical Notes:</td>
-                                    <td style="color: #f8fafc; padding: 6px 0; text-align: right;">${notes}</td>
-                                </tr>
-                                ` : ''}
-                            </table>
-                        </div>
-                    </div>
-
-                    <div style="text-align: center; padding-top: 16px; border-top: 1px solid #1e293b; color: #64748b; font-size: 11px;">
-                        <p style="margin: 0;">Sent automatically via SONIQX Digital Audiology Platform</p>
-                        <p style="margin: 4px 0 0 0;">Sender: ${smtpConfig.smtp_user}</p>
-                    </div>
-                </div>
-                `;
-
-                const mailOptions = {
-                    from: `"SONIQX Audiology Platform" <${smtpConfig.smtp_user}>`,
-                    to: cleanRecipient,
-                    subject: `[SONIQX AUDIOMETRY PDF REPORT #${reportId}] - ${userName}`,
-                    text: `Hello ${userName},\n\nPlease find attached your official digital audiometry screening report PDF.\n\nReport ID: ${reportId}\nDate: ${date}\nStatus: ${overallStatus}\n\nSent via SONIQX Digital Audiology Platform (${smtpConfig.smtp_user}).`,
-                    html: htmlContent,
-                    attachments: [
-                        {
-                            filename: reportFileName,
-                            content: pdfBuffer,
-                            contentType: 'application/pdf'
-                        }
-                    ]
-                };
-
-                const transporter = createTransporter(smtpConfig);
-                const info = await transporter.sendMail(mailOptions);
-                console.log(`[SONIQX Email API] SUCCESS: Email dispatched to ${cleanRecipient}. MessageId: ${info.messageId}`);
-
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({
-                    success: true,
-                    message: `Official Audiology PDF report successfully emailed to ${cleanRecipient}.`,
-                    messageId: info.messageId,
-                    recipient: cleanRecipient
-                }));
-            } catch (err) {
-                console.error('[SONIQX Email API Error]', err.message);
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({
-                    success: false,
-                    error: err.message || 'Failed to send email report.',
-                    code: err.code || 'EMAIL_FAILED'
-                }));
-            }
-        });
-        return;
-    }
-
-    let reqUrl = req.url.split('?')[0];
-    if (reqUrl === '/') reqUrl = '/index.html';
-
-    let filePath = path.join(DIST_DIR, reqUrl);
-
-    if (!filePath.startsWith(DIST_DIR)) {
-        res.writeHead(403);
-        return res.end('Forbidden');
-    }
-
-    fs.stat(filePath, (err, stats) => {
-        if (err || !stats.isFile()) {
-            filePath = path.join(DIST_DIR, 'index.html');
         }
 
-        const ext = path.extname(filePath).toLowerCase();
-        const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+        if (!aiAnswer) {
+            aiAnswer = genericErrMsg;
+        }
 
-        fs.readFile(filePath, (readErr, content) => {
-            if (readErr) {
-                res.writeHead(500);
-                return res.end('Server Error');
-            }
-            res.writeHead(200, { 'Content-Type': contentType });
-            res.end(content, 'utf-8');
+        return res.status(200).json({
+            success: true,
+            answer: aiAnswer,
+            mode: mode,
+            language: validLang,
+            source: activeApiKey ? 'gemini_api' : 'fallback'
         });
-    });
-});
-
-server.listen(PORT, () => {
-    console.log(`==========================================================`);
-    console.log(`   SONIQX — Precision Audiology Platform & AI Server`);
-    console.log(`==========================================================`);
-    console.log(` Server running live at: http://localhost:${PORT}`);
-    console.log(` AI Chat API Endpoint:   http://localhost:${PORT}/api/ai-chat`);
-    console.log(` Email API Endpoint:     http://localhost:${PORT}/api/send-email`);
-    console.log(` Static Files Served:    ${DIST_DIR}`);
-    console.log(`==========================================================`);
-});
+    } catch (err) {
+        console.error('[Vercel Serverless SONIQX AI Error]', err.message);
+        return res.status(200).json({
+            success: true,
+            answer: ERROR_MESSAGES.en
+        });
+    }
+};

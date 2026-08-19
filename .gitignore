@@ -23,6 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
-email_config.js
+# Environment & Secrets
 .env
-
+.env.local
+.env.*.local
+email_config.json
+email_config.js
