@@ -57,3 +57,97 @@ html.focus-assist .content-layer > nav:hover,
 html.focus-assist .content-layer > footer:hover {
   opacity: 1;
 }
+
+/* ==========================================================================
+   SONIQX MOBILE RESPONSIVENESS & RESPONSIVE LAYOUT FIXES
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  html, body, #root {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent tracking/letter-spacing overflow on mobile */
+  [class*="tracking-"] {
+    letter-spacing: 0.08em !important;
+  }
+
+  /* Responsive Header Text Sizing */
+  .text-4xl, .text-6xl, .sm\:text-6xl, .md\:text-7xl {
+    font-size: 1.65rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .text-3xl {
+    font-size: 1.35rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .text-2xl {
+    font-size: 1.15rem !important;
+    line-height: 1.35 !important;
+  }
+
+  /* Header & Navigation Mobile Layout */
+  header, nav, .content-layer > nav {
+    max-width: 100vw !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  /* Main Container Wrappers & Cards */
+  main, section, div[class*="max-w-"], .retro-card, .paper-card, .newspaper-card {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* SVG Audiogram & Image Responsiveness */
+  svg, img, canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Floating Dr. Audio AI Chatbot Mobile Layout */
+  .fixed.bottom-4.right-4, 
+  div[class*="fixed"][class*="bottom-4"] {
+    left: 0.5rem !important;
+    right: 0.5rem !important;
+    bottom: 0.5rem !important;
+    width: calc(100vw - 1rem) !important;
+    max-width: calc(100vw - 1rem) !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Dr. Audio AI Opened Modal on Mobile */
+  div[class*="max-w-md"], div[class*="max-w-lg"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Small Mobile Viewport Padding & Font Scaling */
+  header h1, nav h1 {
+    font-size: 1.2rem !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .p-6, .p-8, .p-10, .p-12, .px-6, .px-8, .px-12, .py-12, .py-16, .py-20 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  input, select, textarea, button {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
