@@ -152,50 +152,124 @@ html.focus-assist .content-layer > footer:hover {
 }
 
 /* ==========================================================================
-   DR. AUDIO AI FLOATING CHATBOT RESPONSIVE & FIXED BOTTOM STYLING
+   DR. AUDIO AI COMPACT FLOATING PILL & MOBILE BOTTOM-SHEET REFACTOR
    ========================================================================== */
-aside[aria-label="SONIQX AI Companion"],
-aside.fixed,
-.fixed.bottom-4.right-4 {
+
+/* Base Container - Default position on Bottom-Right */
+aside[aria-label="SONIQX AI Companion"] {
   position: fixed !important;
-  bottom: 0.75rem !important;
-  right: 0.75rem !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  left: auto !important;
+  top: auto !important;
   z-index: 99999 !important;
   margin: 0 !important;
   box-sizing: border-box !important;
-  transition: all 0.25s ease !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-@media (max-width: 640px) {
-  aside[aria-label="SONIQX AI Companion"],
-  aside.fixed,
-  .fixed.bottom-4.right-4 {
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    width: calc(100vw - 1rem) !important;
-    max-width: 420px !important;
-    bottom: 0.5rem !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+/* Collapsed State: Small Floating Pill */
+aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed {
+  width: auto !important;
+  max-width: 220px !important;
+  cursor: pointer !important;
+}
+
+aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed .paper-card {
+  border-radius: 20px !important;
+  border: 1.5px solid var(--gold, #c8963e) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85) !important;
+  background: #121215 !important;
+}
+
+aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed .bg-\[\#121215\] {
+  padding: 8px 14px !important;
+  border-bottom: none !important;
+  border-radius: 20px !important;
+  gap: 10px !important;
+  background: #121215 !important;
+}
+
+/* Expanded State: Desktop Modal */
+aside[aria-label="SONIQX AI Companion"].ai-modal-expanded {
+  width: 380px !important;
+  max-width: calc(100vw - 2rem) !important;
+}
+
+/* ==========================================================================
+   MOBILE-ONLY RULES (@media (max-width: 768px))
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Rule 1 & 2: Collapsed Pill on Mobile (Bottom-Right Docked, Max-Width 220px) */
+  aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    left: auto !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: 220px !important;
+    z-index: 99999 !important;
   }
 
-  aside[aria-label="SONIQX AI Companion"] > div {
-    border-radius: 12px !important;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85) !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
+  /* Rule 1: Hide "History" button and Chevron Arrow in Collapsed State on Mobile */
+  aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed button[title="View Chat History"],
+  aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed button[title="Minimize Chatbot"],
+  aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed button[title="Expand Chatbot"],
+  aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed .ai-header-controls {
+    display: none !important;
   }
 
-  aside[aria-label="SONIQX AI Companion"] input {
+  /* Rule 2: Keep ONLY bot icon, "Dr. Audio AI", and "SONIQX AUDIOLOGY AI" subtitle visible */
+  aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed .bg-\[\#121215\] {
+    padding: 7px 12px !important;
+    gap: 8px !important;
+  }
+
+  aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed span.font-serif {
     font-size: 13px !important;
-    padding: 0.5rem 0.75rem !important;
+    line-height: 1.2 !important;
+    color: #f5f0eb !important;
+    font-weight: 700 !important;
   }
 
-  aside[aria-label="SONIQX AI Companion"] button {
-    touch-action: manipulation;
+  aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed span.text-\[9px\] {
+    display: block !important;
+    font-size: 8.5px !important;
+    color: #c8963e !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.12em !important;
+  }
+
+  /* Rule 3: Expanded Mobile Bottom-Sheet (100% width, 85vh height, bottom 0) */
+  aside[aria-label="SONIQX AI Companion"].ai-modal-expanded {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 85vh !important;
+    max-height: 85vh !important;
+    z-index: 99999 !important;
+    border-radius: 20px 20px 0 0 !important;
+  }
+
+  aside[aria-label="SONIQX AI Companion"].ai-modal-expanded > div.paper-card {
+    height: 100% !important;
+    border-radius: 20px 20px 0 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Show History button and Minimize Controls when Expanded on Mobile */
+  aside[aria-label="SONIQX AI Companion"].ai-modal-expanded .ai-header-controls,
+  aside[aria-label="SONIQX AI Companion"].ai-modal-expanded button[title="View Chat History"],
+  aside[aria-label="SONIQX AI Companion"].ai-modal-expanded button[title="Minimize Chatbot"] {
+    display: flex !important;
   }
 }
+
+
 
 
