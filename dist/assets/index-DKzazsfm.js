@@ -931,7 +931,24 @@ function Cme(){
     setForm(prev=>({name:prev.name||"",email:prev.email||"",age:newAge,gender:prev.gender||"Male"}));
     setError("");
     setAgeError("");
+    setTimeout(()=>{
+      const target=document.getElementById("patient-registration-card")||document.querySelector(".patient-registration-card")||document.querySelector("form");
+      if(target){
+        target.scrollIntoView({behavior:"smooth",block:"start"});
+      }
+    },60);
   };
+
+  k.useEffect(()=>{
+    if(regMode){
+      setTimeout(()=>{
+        const target=document.getElementById("patient-registration-card")||document.querySelector(".patient-registration-card")||document.querySelector("form");
+        if(target){
+          target.scrollIntoView({behavior:"smooth",block:"start"});
+        }
+      },60);
+    }
+  },[regMode]);
 
   const handleRegisterSubmit=b=>{
     b.preventDefault();
@@ -968,7 +985,7 @@ function Cme(){
         p.jsx("h1",{className:"font-serif font-black text-4xl sm:text-6xl text-stone-900 tracking-tight uppercase",children:"INDIVIDUAL HEARING SCREENING"}),
         p.jsx("p",{className:"font-serif italic text-base text-stone-950 font-medium max-w-2xl mx-auto",children:'"Select your preferred screening category below to register and begin your hearing test."'})
       ]}),
-      regMode ? p.jsxs("div",{className:"newspaper-card p-6 md:p-8 max-w-2xl mx-auto bg-white space-y-6 border-2 border-stone-900 shadow-lg animate-slide-in-up",children:[
+      regMode ? p.jsxs("div",{id:"patient-registration-card",className:"newspaper-card p-6 md:p-8 max-w-2xl mx-auto bg-white space-y-6 border-2 border-stone-900 shadow-lg animate-slide-in-up patient-registration-card",children:[
         p.jsxs("div",{className:"flex items-center justify-between border-b-2 border-stone-900 pb-4",children:[
           p.jsxs("div",{className:"flex items-center gap-3",children:[
             p.jsx("div",{className:"w-12 h-12 rounded bg-amber-100 border-2 border-stone-900 flex items-center justify-center font-bold text-stone-900",children:p.jsx(xW,{className:"w-6 h-6"})}),
