@@ -63,39 +63,62 @@ function getSMTPConfig() {
 
 // Fallback 1-2 line audiology answer generator
 function generateLocalAudiologyAnswer(q, mode, lang) {
-    const query = (q || '').toLowerCase();
-    const isEs = lang === 'es';
+    const query = (q || '').toLowerCase().trim();
     const isHi = lang === 'hi';
+    const isEs = lang === 'es';
 
-    if (query.includes('ringing') || query.includes('tinnitus') || query.includes('sound in ear')) {
-        if (isHi) return "टिनिटस (कान में घंटी बजना) का इलाज सफेद शोर (White Noise) थेरेपी और सुरक्षित वॉल्यूम स्तरों से किया जाता है।\nध्वनि चिकित्सा और ऑडियोलॉजिस्ट जांच से लाभ मिलता है।";
-        if (isEs) return "El tinnitus (zumbido en los oídos) se trata con terapia de sonido y protección auditiva.\nSe recomienda evitar ruidos fuertes y realizar un examen audiológico.";
-        return "Tinnitus (ringing in ears) is commonly managed with sound therapy and safe listening habits.\nAvoiding loud noise exposure helps protect your hearing health.";
+    // Quick Question 1: How does the test work? / यह टेस्ट कैसे काम करता है?
+    if (query.includes('how does') || query.includes('how test') || (query.includes('work') && query.includes('test')) || query.includes('काम करता') || query.includes('कैसे काम') || query.includes('funciona la prueba')) {
+        if (isHi) return "डिजिटल प्यूर-टोन ऑडियोमेट्री आपके हेडफोन में 500Hz-8000Hz आवृत्तियों पर आवाज बजाती है। जब भी आपको आवाज सुनाई दे, बटन दबाएं।";
+        if (isEs) return "La audiometría digital emite tonos entre 500Hz y 8000Hz en sus auriculares. Presione el botón cada vez que escuche un tono.";
+        return "Digital pure-tone audiometry plays calibrated sound tones across 500Hz-8000Hz speech frequencies into your headphones. You press the button whenever you hear a tone to record your auditory threshold.";
     }
 
-    if (query.includes('headphone') || query.includes('earphone') || query.includes('volume') || query.includes('loud')) {
-        if (isHi) return "सुरक्षित सुनने के लिए 60/60 नियम का पालन करें: 60% वॉल्यूम पर अधिकतम 60 मिनट तक सुनें।\nस्टीरियो हेडफोन दोनों कानों की अलग-अलग जांच करते हैं।";
-        if (isEs) return "Siga la regla 60/60: escuche al 60% del volumen durante máximo 60 minutos continuos.\nLos auriculares estéreo evalúan cada oído de forma independiente.";
-        return "Follow the 60/60 rule: Listen at max 60% volume for no more than 60 minutes at a time.\nStereo headphones isolate left and right ears for accurate testing.";
+    // Quick Question 2: Why put on headphones? / हेडफोन क्यों जरूरी हैं?
+    if ((query.includes('why') && (query.includes('headphone') || query.includes('earphone') || query.includes('wear'))) || query.includes('हेडफोन') || query.includes('क्यों जरूरी') || query.includes('ponerse auriculares')) {
+        if (isHi) return "हेडफोन दोनों कानों को अलग-अलग जांचते हैं ताकि एक कान की आवाज दूसरे कान में न जाए और सही परीक्षण हो सके।";
+        if (isEs) return "Los auriculares aíslan cada oído para entregar sonido de forma independiente y medir la audición con precisión.";
+        return "Headphones isolate left and right ears so sounds are delivered to one ear at a time without sound leaking, allowing accurate threshold measurement for each ear.";
     }
 
-    if (query.includes('frequency') || query.includes('hz') || query.includes('pitch') || query.includes('db')) {
-        if (isHi) return "आवृत्ति (Hz) ध्वनि के तारत्व को दर्शाती है (500Hz से 8000Hz)।\nसामान्य सुनवाई का स्तर 0 से 25 dB HL के बीच होता है।";
-        if (isEs) return "La frecuencia en Hertz (Hz) mide el tono de 500 Hz a 8000 Hz.\nEl rango de audición normal es de 0 a 25 dB HL.";
-        return "Frequencies from 500 Hz to 8000 Hz measure sound pitch from bass to treble.\nNormal hearing thresholds fall between 0 and 25 dB HL.";
+    // Quick Question 3: Is my data private? / क्या मेरा डेटा सुरक्षित है?
+    if (query.includes('privacy') || query.includes('private') || query.includes('data') || query.includes('safe') || query.includes('सुरक्षित') || query.includes('डेटा') || query.includes('datos son privados')) {
+        if (isHi) return "आपकी सुनवाई जांच के परिणाम और डेटा 100% निजी, एन्क्रिप्टेड और आपके डिवाइस पर सुरक्षित रहते हैं।";
+        if (isEs) return "Sus resultados de audición y datos son 100% privados, encriptados y guardados de forma segura en su dispositivo.";
+        return "Your hearing screening results and test data are 100% private, securely encrypted, and stored locally on your device.";
     }
 
-    if (query.includes('report') || query.includes('pdf') || query.includes('email') || query.includes('doctor')) {
-        if (isHi) return "आप परीक्षण पूरा होने पर अपनी आधिकारिक पीडीएफ रिपोर्ट डाउनलोड या ईमेल कर सकते हैं।\nरिपोर्ट में ग्राफ और विस्तृत ऑडियोलॉजिकल निष्कर्ष शामिल हैं।";
-        if (isEs) return "Puede descargar su informe oficial en PDF y enviarlo a su médico por correo electrónico.\nIncluye la curva del audiograma y hallazgos clínicos.";
-        return "You can generate your official clinical PDF report at the end of screening and email it directly to your doctor.\nIt includes your audiometric curve and audiological insights.";
+    // Quick Question 4: What do frequencies mean? / फ्रीक्वेंसी का क्या मतलब है?
+    if (query.includes('frequency') || query.includes('frequencies') || query.includes('hz') || query.includes('pitch') || query.includes('फ्रीक्वेंसी') || query.includes('मतलब') || query.includes('frecuencias')) {
+        if (isHi) return "हर्ट्ज (Hz) में मापी गई फ्रीक्वेंसी ध्वनि के तारत्व को दर्शाती है (500Hz से 8000Hz), जो यह बताती है कि आप अलग-अलग आवाजें कितनी अच्छी तरह सुनते हैं।";
+        if (isEs) return "La frecuencia en Hertz (Hz) mide el tono del sonido desde graves (500Hz) hasta agudos (8000Hz).";
+        return "Frequencies measured in Hertz (Hz) represent sound pitch from low bass (500Hz) to high treble (8000Hz), evaluating how well you hear speech pitch.";
     }
 
-    if (mode === 'child') {
-        return `Sparky AI: Great question about "${q}"!\nPut on your magic headphones and tap the glowing star whenever you hear a fun sound! 🎈`;
+    if (query === 'ear' || query === 'ears' || query.includes('ear anatomy') || query.includes('ear health') || query.includes('parts of ear') || query.includes('कान')) {
+        if (isHi) return "मानव कान के तीन मुख्य भाग होते हैं: बाहरी, मध्य और आंतरिक कान। यह ध्वनि तरंगों को कंपन में बदलकर मस्तिष्क तक संदेश भेजता है।";
+        if (isEs) return "El oído humano consta de tres partes: externo, medio e interno. Convierte las ondas sonoras en impulsos nerviosos.";
+        return "The human ear consists of three main parts: outer, middle, and inner ear. It collects sound waves, converts them into vibrations, and sends signals to the brain for hearing.";
     }
 
-    return `SONIQX AI: Audiometry measures hearing thresholds across speech frequencies (500Hz - 8000Hz).\nPlease wear stereo headphones and follow the tone prompts on screen.`;
+    if (query.includes('decibel') || query.includes('db')) {
+        if (isHi) return "डेसिबल (dB) ध्वनि की तीव्रता या वॉल्यूम को मापता है। सामान्य सुनवाई 0 से 25 dB HL होती है, जबकि 85 dB से अधिक की आवाज नुकसान पहुंचा सकती है।";
+        return "Decibels (dB) measure sound loudness or intensity. Normal hearing thresholds range from 0 to 25 dB HL, while sounds above 85 dB can cause hearing damage.";
+    }
+
+    if (query.includes('loss') || query.includes('deaf') || query.includes('impairment')) {
+        if (isHi) return "सुनवाई की कमी (Hearing Loss) उम्र, तेज आवाज या कान की समस्या से हो सकती है। डिजिटल जांच से समय पर पता चलता है।";
+        return "Hearing loss can be sensorineural or conductive, caused by noise exposure, aging, or ear conditions. Early digital screening helps detect threshold shifts.";
+    }
+
+    if (query.includes('tinnitus') || query.includes('ringing') || query.includes('sound in ear')) {
+        if (isHi) return "टिनिटस (कान में घंटी बजना) का इलाज साउंड थेरेपी और सुरक्षित वॉल्यूम स्तरों से किया जाता है।";
+        return "Tinnitus (ringing in ears) is managed with sound therapy, hearing aids, and safe listening habits. Avoiding loud noise protects hearing.";
+    }
+
+    if (isHi) return "कृपया सुनवाई, कान के स्वास्थ्य, हेडफोन या ऑडियोग्राम से संबंधित कोई विशिष्ट प्रश्न पूछें।";
+    if (isEs) return "Por favor haga una pregunta específica sobre audición, salud auditiva o auriculares.";
+    return "Please ask any specific question about hearing, ear health, audiograms, headphones, or sound frequencies.";
 }
 
 // Request Handler
@@ -111,6 +134,11 @@ const server = http.createServer(async (req, res) => {
     }
 
     // API Endpoint: AI Chat (Gemini API with 1-2 line constraint)
+    // API Endpoint: AI Chat (Strict Audiology-Only Soniq AI / Gemini API)
+    // API Endpoint: AI Chat (Ultra-Fast 1-3 Sentence Soniq Audiology AI)
+    // API Endpoint: AI Chat (Google Gemini API Integration)
+    // API Endpoint: AI Chat (Google Gemini API Integration)
+    // API Endpoint: AI Chat (Google Gemini API Integration)
     if (req.url === '/api/ai-chat' && req.method === 'POST') {
         let body = '';
         req.on('data', chunk => {
@@ -120,45 +148,120 @@ const server = http.createServer(async (req, res) => {
 
         req.on('end', async () => {
             try {
-                const { question, mode = 'adult', language = 'en' } = JSON.parse(body || '{}');
+                const { question = '', mode = 'adult', language = 'en' } = JSON.parse(body || '{}');
+                const cleanQ = (question || '').trim();
+
+                const languageNames = {
+                    hi: 'Hindi (हिंदी)',
+                    es: 'Spanish (Español)',
+                    fr: 'French (Français)',
+                    de: 'German (Deutsch)',
+                    ja: 'Japanese (日本語)',
+                    zh: 'Chinese (中文)',
+                    en: 'English'
+                };
+                const targetLangName = languageNames[language] || 'English';
+
+                const offTopicRedirectMsg = language === 'hi' 
+                    ? "मैं सॉनिक एआई हूं, सुनवाई और ऑडियोलॉजी पर केंद्रित हूं। कृपया सुनवाई से संबंधित प्रश्न पूछें।"
+                    : language === 'es'
+                    ? "Soy Soniq AI, centrado en la audición y audiología. Por favor haga una pregunta relacionada con la audición."
+                    : "I’m Soniq AI, focused on hearing and audiology. Please ask a hearing-related question.";
+
+                if (!cleanQ) {
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({
+                        success: true,
+                        answer: language === 'hi' ? "कृपया सुनवाई से संबंधित प्रश्न पूछें।" : "Please ask a hearing-related question."
+                    }));
+                }
+
+                // Off-Topic Detector with full multilingual keyword support
+                const isOffTopic = (qStr) => {
+                    const q = qStr.toLowerCase();
+                    const audiologyKeywords = [
+                        'hear', 'ear', 'ears', 'audiology', 'audiometer', 'audiogram', 'sound', 'decibel', 'db',
+                        'frequency', 'hz', 'pitch', 'headphone', 'earphone', 'volume', 'tinnitus', 'ringing',
+                        'noise', 'deaf', 'presbycusis', 'ent', 'otology', 'wax', 'earwax', 'test', 'screening',
+                        'doctor', 'report', 'pdf', 'privacy', 'private', 'data', 'safe', '60/60', 'protection', 'aid',
+                        'सुनवाई', 'कान', 'हेडफोन', 'आवाज', 'फ्रीक्वेंसी', 'टेस्ट', 'डेटा', 'सुरक्षित', 'काम करता', 'जरूरी', 'मतलब',
+                        'prueba', 'datos', 'auriculares', 'frecuencia', 'oído'
+                    ];
+                    if (audiologyKeywords.some(kw => q.includes(kw))) return false;
+
+                    const offTopicKeywords = [
+                        'python', 'java', 'c++', 'code', 'coding', 'program', 'script', 'snake game',
+                        'virat', 'kohli', 'cricket', 'football', 'messi', 'ronaldo', 'weather', 'temp',
+                        'joke', 'pasta', 'cook', 'recipe', 'math', 'mathematics', 'algebra', 'calculus',
+                        'president', 'capital of', 'movie', 'song', 'history', 'who is', 'how to make', 'game'
+                    ];
+                    return offTopicKeywords.some(kw => q.includes(kw));
+                };
+
+                if (isOffTopic(cleanQ)) {
+                    console.log(`[Soniq AI Guardrail] Off-topic question detected: "${cleanQ}"`);
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({
+                        success: true,
+                        answer: offTopicRedirectMsg,
+                        isOffTopic: true
+                    }));
+                }
+
                 const config = getSMTPConfig();
-                const apiKey = process.env.GEMINI_API_KEY || config.gemini_api_key;
+                const activeApiKey = process.env.GEMINI_API_KEY || config.gemini_api_key || "";
 
                 let aiAnswer = '';
 
-                if (apiKey) {
+                if (activeApiKey) {
                     try {
-                        console.log(`[SONIQX Gemini API] Sending question to Gemini API: "${question}"...`);
-                        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-                        const systemPrompt = `You are SONIQX AI, a friendly, concise, and expert digital audiology assistant. Mode: ${mode}, Language: ${language}.\n\nUser Question: "${question}"\n\nCRITICAL MANDATORY RULE: Respond in STRICTLY 1 OR 2 LINES ONLY. Never exceed 2 lines. Keep it encouraging, accurate, and easy to understand.`;
+                        console.log(`[Soniq AI Gemini API] Fetching Gemini answer in ${targetLangName} for: "${cleanQ}"...`);
+                        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${activeApiKey}`;
+                        
+                        const systemInstructionText = `You are Soniq AI, a specialized audiology and hearing-health assistant.
+
+CRITICAL MANDATORY LANGUAGE RULE:
+You MUST write your entire response strictly in ${targetLangName}.
+If language is Hindi ("hi"), write in Devanagari script Hindi.
+If language is Spanish ("es"), write in Spanish.
+Do NOT respond in English unless the selected language is English.
+
+Answer ONLY questions related to hearing, ears, audiology, hearing tests, hearing loss, sound, frequencies, decibels, tinnitus, hearing aids, headphones, hearing protection, and related topics.
+
+Give ONLY the information necessary to answer the user's specific question.
+Keep every response to 1–3 short sentences and under 50 words in ${targetLangName}.
+
+If the question is unrelated to hearing or audiology, reply in ${targetLangName} with:
+'${offTopicRedirectMsg}'`;
 
                         const response = await fetch(geminiUrl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                contents: [{ parts: [{ text: systemPrompt }] }]
+                                system_instruction: { parts: [{ text: systemInstructionText }] },
+                                contents: [{ parts: [{ text: cleanQ }] }],
+                                generationConfig: {
+                                    maxOutputTokens: 300,
+                                    temperature: 0.2,
+                                    topP: 0.8
+                                }
                             })
                         });
 
                         const data = await response.json();
-                        if (data && data.candidates && data.candidates[0] && data.candidates[0].content) {
+                        if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
                             aiAnswer = data.candidates[0].content.parts.map(p => p.text).join('').trim();
-                            console.log(`[SONIQX Gemini API] Received answer from Gemini API: "${aiAnswer}"`);
+                            console.log(`[Soniq AI Gemini API] Received response in ${targetLangName}: "${aiAnswer.substring(0, 60)}..."`);
+                        } else if (data && data.error) {
+                            console.error('[Soniq AI Gemini API Error]', data.error.code, data.error.message);
                         }
                     } catch (gErr) {
-                        console.error('[SONIQX Gemini API] Error calling Gemini API endpoint:', gErr.message);
+                        console.error('[Soniq AI Gemini API] Fetch Exception:', gErr.message);
                     }
                 }
 
-                // Fallback to local 1-2 line answer if no API key or Gemini request failed
                 if (!aiAnswer) {
-                    aiAnswer = generateLocalAudiologyAnswer(question, mode, language);
-                }
-
-                // Strict 1-2 line formatting guarantee
-                const cleanLines = aiAnswer.split('\n').map(l => l.trim()).filter(Boolean);
-                if (cleanLines.length > 2) {
-                    aiAnswer = cleanLines.slice(0, 2).join(' ');
+                    aiAnswer = generateLocalAudiologyAnswer(cleanQ, mode, language);
                 }
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -166,21 +269,20 @@ const server = http.createServer(async (req, res) => {
                     success: true,
                     answer: aiAnswer,
                     mode: mode,
-                    source: apiKey ? 'gemini_api' : 'local_ai'
+                    language: language,
+                    source: activeApiKey ? 'gemini_api' : 'local_ai'
                 }));
             } catch (err) {
-                console.error('[SONIQX AI Chat API] Error handling AI question:', err);
+                console.error('[Soniq AI Chat API] Error:', err.message);
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 return res.end(JSON.stringify({
                     success: true,
-                    answer: generateLocalAudiologyAnswer('general', 'adult', 'en')
+                    answer: "Sorry, I couldn't process that question right now. Please try again."
                 }));
             }
         });
         return;
-    }
-
-    // API Endpoint: Send Email
+    } // API Endpoint: Send Email
     if (req.url === '/api/send-email' && req.method === 'POST') {
         let body = '';
 
