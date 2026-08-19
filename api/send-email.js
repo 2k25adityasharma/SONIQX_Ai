@@ -1,53 +1,44 @@
 // Vercel Serverless Function Endpoint for SONIQX Send Email Report (/api/send-email)
 const nodemailer = require('nodemailer');
-const fs = require('fs');
-const path = require('path');
-
-const CONFIG_PATH = path.join(__dirname, '..', 'email_config.json');
 
 function getSMTPConfig() {
-    let config = {
+    return {
         smtp_service: 'gmail',
         smtp_host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        smtp_port: parseInt(process.env.SMTP_PORT || '465', 10),
-        smtp_secure: true,
-        smtp_user: process.env.SMTP_USER || '',
-        smtp_pass: process.env.SMTP_PASS || ''
+        smtp_port: parseInt(process.env.SMTP_PORT || '587', 10),
+        smtp_secure: process.env.SMTP_SECURE === 'true' || false,
+        smtp_user: process.env.SMTP_USER || process.env.VITE_SMTP_USER || '',
+        smtp_pass: process.env.SMTP_PASS || process.env.VITE_SMTP_PASS || ''
     };
-
-    if (fs.existsSync(CONFIG_PATH)) {
-        try {
-            const fileData = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
-            config = { ...config, ...fileData };
-        } catch (err) {}
-    }
-
-    if (process.env.SMTP_USER) config.smtp_user = process.env.SMTP_USER;
-    if (process.env.SMTP_PASS) config.smtp_pass = process.env.SMTP_PASS;
-    if (process.env.SMTP_HOST) config.smtp_host = process.env.SMTP_HOST;
-    if (process.env.SMTP_PORT) config.smtp_port = parseInt(process.env.SMTP_PORT, 10);
-
-    return config;
 }
 
 function createTransporter(config) {
-    if (config.smtp_service === 'gmail') {
+    const user = process.env.SMTP_USER || config.smtp_user || '';
+    const pass = process.env.SMTP_PASS || config.smtp_pass || '';
+    const host = process.env.SMTP_HOST || config.smtp_host || 'smtp.gmail.com';
+    const port = parseInt(process.env.SMTP_PORT || (config.smtp_port ? String(config.smtp_port) : '587'), 10);
+
+    if (!user || !pass) {
+        console.error('[SONIQX Email] CRITICAL: SMTP_USER or SMTP_PASS environment variable is missing!');
+    }
+
+    if (host.includes('gmail') || config.smtp_service === 'gmail') {
         return nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: config.smtp_user,
-                pass: config.smtp_pass
+                user: user,
+                pass: pass
             }
         });
     }
 
     return nodemailer.createTransport({
-        host: config.smtp_host || 'smtp.gmail.com',
-        port: config.smtp_port || 465,
-        secure: config.smtp_secure !== undefined ? config.smtp_secure : true,
+        host: host,
+        port: port,
+        secure: port === 465,
         auth: {
-            user: config.smtp_user,
-            pass: config.smtp_pass
+            user: user,
+            pass: pass
         }
     });
 }
@@ -103,6 +94,12 @@ module.exports = async function handler(req, res) {
         const reportFileName = fileName || `Audiometry_Report_${userName.replace(/\s+/g, '_')}_${reportId}.pdf`;
 
         const smtpConfig = getSMTPConfig();
+        if (!smtpConfig.smtp_user || !smtpConfig.smtp_pass) {
+            return res.status(400).json({
+                success: false,
+                error: 'SMTP credentials missing. Please set SMTP_USER and SMTP_PASS environment variables in Vercel.'
+            });
+        }
 
         const htmlContent = `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0f172a; color: #f8fafc; border-radius: 16px; padding: 24px; border: 1px solid #334155;">
@@ -180,6 +177,7 @@ module.exports = async function handler(req, res) {
             recipient: cleanRecipient
         });
     } catch (err) {
+        console.error('[SONIQX Vercel Send Email Error]', err);
         return res.status(400).json({
             success: false,
             error: err.message || 'Failed to send email report.',

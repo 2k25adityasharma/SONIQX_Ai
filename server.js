@@ -5,7 +5,6 @@ const nodemailer = require('nodemailer');
 
 const PORT = process.env.PORT || 5000;
 const DIST_DIR = path.join(__dirname, 'dist');
-const CONFIG_PATH = path.join(__dirname, 'email_config.json');
 
 // MIME types lookup
 const MIME_TYPES = {
@@ -167,49 +166,39 @@ function isOffTopicQuestion(cleanQ) {
 }
 
 function getSMTPConfig() {
-    let config = {
+    return {
         smtp_service: 'gmail',
         smtp_host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        smtp_port: parseInt(process.env.SMTP_PORT || '465', 10),
-        smtp_secure: true,
-        smtp_user: process.env.SMTP_USER || '',
-        smtp_pass: process.env.SMTP_PASS || '',
-        ai_api_key: ''
+        smtp_port: parseInt(process.env.SMTP_PORT || '587', 10),
+        smtp_secure: process.env.SMTP_SECURE === 'true' || false,
+        smtp_user: process.env.SMTP_USER || process.env.VITE_SMTP_USER || '',
+        smtp_pass: process.env.SMTP_PASS || process.env.VITE_SMTP_PASS || ''
     };
-
-    if (fs.existsSync(CONFIG_PATH)) {
-        try {
-            const fileData = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
-            config = { ...config, ...fileData };
-        } catch (err) {}
-    }
-
-    if (process.env.SMTP_USER) config.smtp_user = process.env.SMTP_USER;
-    if (process.env.SMTP_PASS) config.smtp_pass = process.env.SMTP_PASS;
-    if (process.env.AI_API_KEY) config.ai_api_key = process.env.AI_API_KEY;
-    if (process.env.GEMINI_API_KEY) config.ai_api_key = process.env.GEMINI_API_KEY;
-
-    return config;
 }
 
 function createTransporter(config) {
-    if (config.smtp_service === 'gmail') {
+    const user = process.env.SMTP_USER || config.smtp_user || '';
+    const pass = process.env.SMTP_PASS || config.smtp_pass || '';
+    const host = process.env.SMTP_HOST || config.smtp_host || 'smtp.gmail.com';
+    const port = parseInt(process.env.SMTP_PORT || (config.smtp_port ? String(config.smtp_port) : '587'), 10);
+
+    if (host.includes('gmail') || config.smtp_service === 'gmail') {
         return nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: config.smtp_user,
-                pass: config.smtp_pass
+                user: user,
+                pass: pass
             }
         });
     }
 
     return nodemailer.createTransport({
-        host: config.smtp_host || 'smtp.gmail.com',
-        port: config.smtp_port || 465,
-        secure: config.smtp_secure !== undefined ? config.smtp_secure : true,
+        host: host,
+        port: port,
+        secure: port === 465,
         auth: {
-            user: config.smtp_user,
-            pass: config.smtp_pass
+            user: user,
+            pass: pass
         }
     });
 }
