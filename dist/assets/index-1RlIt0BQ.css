@@ -152,10 +152,10 @@ html.focus-assist .content-layer > footer:hover {
 }
 
 /* ==========================================================================
-   MOBILE RESPONSIVENESS FIXES (@media (max-width: 768px))
+   RESULTS / REPORT SCREEN & MOBILE RESPONSIVENESS FIXES (@media (max-width: 768px))
    ========================================================================== */
 
-/* 1. Calibration / Setup Pages (First 2 Steps Navigation Buttons Overlap Fix) */
+/* 1. Setup & Calibration Navigation Buttons */
 @media (max-width: 768px) {
   .retro-card > .border-t,
   .retro-card > div[class*="border-t"],
@@ -183,11 +183,6 @@ html.focus-assist .content-layer > footer:hover {
 
 /* 2. Tone Test Screen ("No, I did not hear" Button Hidden Fix) */
 @media (max-width: 768px) {
-  main {
-    padding-bottom: 90px !important;
-    overflow-y: auto !important;
-  }
-
   .newspaper-card {
     padding: 1.25rem 0.85rem !important;
     margin-bottom: 2rem !important;
@@ -226,7 +221,67 @@ html.focus-assist .content-layer > footer:hover {
   }
 }
 
-/* 3. Floating AI Widget (Doctor Audio AI Compact Dock & Bottom Sheet) */
+/* 3. Results / Report Screen Mobile Fixes */
+@media (max-width: 768px) {
+  /* Rule 1: Report Card & Text Overflow Fix */
+  main,
+  main > div,
+  .bg-slate-900,
+  div[class*="bg-slate-900"],
+  .result-file-card,
+  .result-email-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+  }
+
+  h1, h2, h3, p, span, strong, label, input {
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+  }
+
+  .grid,
+  div[class*="grid-cols-"] {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  /* Rule 2: Action Buttons Vertical Stacking */
+  .result-action-btns,
+  div:has(> button:contains("Download PDF")),
+  main .bg-slate-900 > div.flex.items-center.gap-3 {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 10px !important;
+    margin-top: 0.5rem !important;
+  }
+
+  .result-action-btns button,
+  .result-action-btns a,
+  main .bg-slate-900 > div.flex.items-center.gap-3 button,
+  main .bg-slate-900 > div.flex.items-center.gap-3 a {
+    width: 100% !important;
+    min-width: 100% !important;
+    box-sizing: border-box !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 0.85rem 1rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Rule 3: Main Page Bottom Padding (110px) to prevent bottom collision */
+  main {
+    padding-bottom: 110px !important;
+    overflow-y: auto !important;
+  }
+}
+
+/* 4. Floating AI Widget (Doctor Audio AI Docked at max-width 190px) */
 aside[aria-label="SONIQX AI Companion"].ai-floating-bubble,
 aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed {
   position: fixed !important;
@@ -235,7 +290,7 @@ aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed {
   left: auto !important;
   top: auto !important;
   width: auto !important;
-  max-width: 200px !important;
+  max-width: 190px !important;
   z-index: 99999 !important;
 }
 
@@ -277,6 +332,7 @@ aside[aria-label="SONIQX AI Companion"].ai-modal-expanded {
     flex-direction: column !important;
   }
 }
+
 
 
 
