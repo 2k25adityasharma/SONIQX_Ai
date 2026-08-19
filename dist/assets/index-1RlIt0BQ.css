@@ -152,41 +152,99 @@ html.focus-assist .content-layer > footer:hover {
 }
 
 /* ==========================================================================
-   DR. AUDIO AI CIRCULAR FLOATING FAB BUBBLE & RESPONSIVE BOTTOM-SHEET
+   MOBILE RESPONSIVENESS FIXES (@media (max-width: 768px))
    ========================================================================== */
 
-/* 1. Collapsed Floating FAB Bubble (Small Round Circle Button on Bottom Right) */
-aside[aria-label="SONIQX AI Companion"].ai-floating-bubble {
+/* 1. Calibration / Setup Pages (First 2 Steps Navigation Buttons Overlap Fix) */
+@media (max-width: 768px) {
+  .retro-card > .border-t,
+  .retro-card > div[class*="border-t"],
+  div[class*="border-t flex justify-between"] {
+    display: flex !important;
+    flex-direction: column-reverse !important;
+    gap: 12px !important;
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  .retro-card > .border-t button,
+  .retro-card > .border-t a,
+  div[class*="border-t flex justify-between"] button,
+  div[class*="border-t flex justify-between"] a {
+    width: 100% !important;
+    min-width: 100% !important;
+    box-sizing: border-box !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 0.85rem 1rem !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+/* 2. Tone Test Screen ("No, I did not hear" Button Hidden Fix) */
+@media (max-width: 768px) {
+  main {
+    padding-bottom: 90px !important;
+    overflow-y: auto !important;
+  }
+
+  .newspaper-card {
+    padding: 1.25rem 0.85rem !important;
+    margin-bottom: 2rem !important;
+  }
+
+  .newspaper-card .py-4,
+  .newspaper-card .py-6,
+  .newspaper-card .space-y-6,
+  .newspaper-card .space-y-8 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .newspaper-card > .border-t,
+  div[class*="pt-6 border-t"] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding-top: 0.75rem !important;
+  }
+
+  .newspaper-card > .border-t button,
+  div[class*="pt-6 border-t"] button {
+    min-width: 0 !important;
+    width: calc(50% - 6px) !important;
+    flex: 1 1 calc(50% - 6px) !important;
+    padding: 0.75rem 0.4rem !important;
+    font-size: 0.8rem !important;
+    box-sizing: border-box !important;
+    letter-spacing: 0 !important;
+  }
+}
+
+/* 3. Floating AI Widget (Doctor Audio AI Compact Dock & Bottom Sheet) */
+aside[aria-label="SONIQX AI Companion"].ai-floating-bubble,
+aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed {
   position: fixed !important;
-  bottom: 20px !important;
-  right: 20px !important;
+  bottom: 16px !important;
+  right: 16px !important;
   left: auto !important;
   top: auto !important;
   width: auto !important;
-  height: auto !important;
+  max-width: 200px !important;
   z-index: 99999 !important;
 }
 
-aside[aria-label="SONIQX AI Companion"].ai-floating-bubble button {
-  width: 56px !important;
-  height: 56px !important;
-  border-radius: 9999px !important;
-  background: #121215 !important;
-  border: 2px solid #c8963e !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed button[title="View Chat History"],
+aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed button[title="Minimize Chatbot"],
+aside[aria-label="SONIQX AI Companion"].ai-badge-collapsed .ai-header-controls {
+  display: none !important;
 }
 
-aside[aria-label="SONIQX AI Companion"].ai-floating-bubble button:hover {
-  transform: scale(1.08) !important;
-  box-shadow: 0 12px 35px rgba(200, 150, 62, 0.4) !important;
-}
-
-/* 2. Expanded State (Desktop Modal Window) */
 aside[aria-label="SONIQX AI Companion"].ai-modal-expanded {
   position: fixed !important;
   bottom: 20px !important;
@@ -198,20 +256,7 @@ aside[aria-label="SONIQX AI Companion"].ai-modal-expanded {
   z-index: 99999 !important;
 }
 
-/* 3. Mobile-Only Rules (@media (max-width: 768px)) */
 @media (max-width: 768px) {
-  /* Floating Circular FAB Bubble on Mobile Bottom-Right */
-  aside[aria-label="SONIQX AI Companion"].ai-floating-bubble {
-    bottom: 16px !important;
-    right: 16px !important;
-  }
-
-  aside[aria-label="SONIQX AI Companion"].ai-floating-bubble button {
-    width: 52px !important;
-    height: 52px !important;
-  }
-
-  /* Expanded Mobile Bottom-Sheet (100% width, 85vh height, bottom 0) */
   aside[aria-label="SONIQX AI Companion"].ai-modal-expanded {
     position: fixed !important;
     left: 0 !important;
@@ -232,6 +277,7 @@ aside[aria-label="SONIQX AI Companion"].ai-modal-expanded {
     flex-direction: column !important;
   }
 }
+
 
 
 
