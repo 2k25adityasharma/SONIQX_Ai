@@ -395,14 +395,23 @@ Error generating stack: `+a.message+`
   const e = ds(), { language: t, setLanguage: n, mode: r, setMode: i, theme: a, toggleTheme: o, t: s, isHeadphoneConfirmed: l, openHeadphoneModal: u } = vi();
   const c = f => "font-mono text-xs tracking-[0.15em] uppercase transition-colors " + (f ? "font-bold" : "");
   return p.jsx("nav", {
-    className: "sticky top-0 w-full z-50 h-20 backdrop-blur-md transition-colors duration-300",
+    className: "sticky top-0 w-full z-50 h-16 sm:h-20 backdrop-blur-md transition-colors duration-300 soniqx-navbar",
     style: { background: "var(--bg)", borderBottom: "1px solid var(--border-subtle)", opacity: 1 },
     children: p.jsxs("div", {
-      className: "flex justify-between items-center w-full px-6 md:px-12 h-full max-w-[1280px] mx-auto gap-4",
+      className: "flex justify-between items-center w-full px-3 sm:px-6 md:px-12 h-full max-w-[1280px] mx-auto gap-2 md:gap-4 navbar-container",
       children: [
-        p.jsx(kr, { to: "/", className: "flex items-center gap-3 shrink-0", children: p.jsx(Iw, { variant: "desktop", theme: a }) }),
+        p.jsx(kr, {
+          to: "/",
+          className: "flex items-center gap-2 shrink-0 navbar-logo",
+          children: p.jsxs(p.Fragment, {
+            children: [
+              p.jsx("div", { className: "hidden md:block", children: p.jsx(Iw, { variant: "desktop", theme: a }) }),
+              p.jsx("div", { className: "block md:hidden", children: p.jsx(Iw, { variant: "compact", theme: a }) })
+            ]
+          })
+        }),
         p.jsxs("div", {
-          className: "hidden md:flex items-center space-x-6 pl-6",
+          className: "hidden md:flex items-center space-x-6 pl-6 navbar-desktop-links",
           style: { borderLeft: "1px solid var(--border-muted)" },
           children: [
             [
@@ -414,12 +423,11 @@ Error generating stack: `+a.message+`
           ]
         }),
         p.jsxs("div", {
-          className: "flex items-center gap-4 sm:gap-5",
+          className: "flex items-center gap-2 sm:gap-4 navbar-utility-controls shrink-0",
           children: [
             p.jsx("button", { onClick: o, className: "flex items-center justify-center p-1.5 transition-all", style: { border: "1px solid var(--border-muted)", borderRadius: 6, color: "var(--gold)", background: "var(--surface)" }, "aria-label": "Toggle Theme", title: a === "dark" ? "Switch to Light Theme" : "Switch to Dark Theme", children: a === "dark" ? p.jsx(DW, { className: "w-4 h-4" }) : p.jsx(vW, { className: "w-4 h-4" }) }),
-            p.jsxs("button", { onClick: u, className: "flex items-center gap-1 font-mono text-xs p-1 transition-colors", style: { color: l ? "var(--gold)" : "var(--text-secondary)" }, title: "Headphone Check", children: [p.jsx("span", { className: "material-symbols-outlined text-[20px]", children: "headphones" }), l && p.jsx("span", { className: "hidden xl:inline text-[10px]", children: "✓" })] }),
-            p.jsxs("div", { className: "flex items-center px-1.5 py-0.5 font-mono text-xs", style: { border: "1px solid var(--border-muted)", borderRadius: 5, background: "var(--surface)" }, children: [p.jsx("span", { className: "material-symbols-outlined text-[15px] mr-1", style: { color: "var(--gold)" }, children: "language" }), p.jsx("select", { value: t, onChange: f => n(f.target.value), className: "bg-transparent border-none focus:outline-none cursor-pointer uppercase text-[11px] font-mono", style: { color: "var(--text-primary)" }, children: ["en", "es", "hi", "fr", "de", "ja", "zh"].map(f => p.jsx("option", { value: f, style: { background: "var(--card)", color: "var(--text-primary)" }, children: f.toUpperCase() }, f)) })] }),
-            
+            p.jsxs("button", { onClick: u, className: "flex items-center gap-1 font-mono text-xs p-1 transition-colors", style: { color: l ? "var(--gold)" : "var(--text-secondary)" }, title: "Headphone Check", children: [p.jsx("span", { className: "material-symbols-outlined text-[18px]", children: "headphones" }), l && p.jsx("span", { className: "hidden xl:inline text-[10px]", children: "✓" })] }),
+            p.jsxs("div", { className: "flex items-center px-1.5 py-0.5 font-mono text-xs", style: { border: "1px solid var(--border-muted)", borderRadius: 5, background: "var(--surface)" }, children: [p.jsx("span", { className: "material-symbols-outlined text-[14px] mr-1", style: { color: "var(--gold)" }, children: "language" }), p.jsx("select", { value: t, onChange: f => n(f.target.value), className: "bg-transparent border-none focus:outline-none cursor-pointer uppercase text-[11px] font-mono", style: { color: "var(--text-primary)" }, children: ["en", "es", "hi", "fr", "de", "ja", "zh"].map(f => p.jsx("option", { value: f, style: { background: "var(--card)", color: "var(--text-primary)" }, children: f.toUpperCase() }, f)) })] })
           ]
         })
       ]
