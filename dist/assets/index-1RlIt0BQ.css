@@ -223,23 +223,88 @@ html.focus-assist .content-layer > footer:hover {
 
 /* 3. Results / Report Screen Mobile Fixes */
 @media (max-width: 768px) {
-  /* Rule 1: Report Card & Text Overflow Fix */
+  /* Main wrapper and container cards single-column vertical stacking */
   main,
   main > div,
-  .bg-slate-900,
-  div[class*="bg-slate-900"],
-  .result-file-card,
-  .result-email-card {
+  main .bg-slate-900,
+  div[class*="bg-slate-900"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
     width: 100% !important;
-    max-width: 100% !important;
+    max-width: 100vw !important;
     box-sizing: border-box !important;
     overflow-wrap: break-word !important;
     word-break: break-word !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
-  h1, h2, h3, p, span, strong, label, input {
-    overflow-wrap: break-word !important;
+  /* Top Result card flex-direction column on mobile */
+  main .bg-slate-900.flex,
+  main div[class*="bg-slate-900"][class*="rounded-2xl"],
+  div[class*="flex flex-col md:flex-row"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 1.25rem 1rem !important;
+    gap: 1.25rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Action Buttons Vertical Stacking (Download PDF Report & Individual Portal) */
+  .result-action-btns,
+  main .result-action-btns,
+  div[class*="result-action-btns"],
+  main .bg-slate-900 div[class*="flex items-center gap-3"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    gap: 10px !important;
+    margin-top: 0.5rem !important;
+  }
+
+  .result-action-btns button,
+  .result-action-btns a,
+  .result-action-btns > *,
+  main .bg-slate-900 div[class*="flex items-center gap-3"] button,
+  main .bg-slate-900 div[class*="flex items-center gap-3"] a {
+    display: flex !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 0.85rem 0.5rem !important;
+    font-size: 0.85rem !important;
+    white-space: normal !important;
     word-break: break-word !important;
+  }
+
+  /* Attached File card & Email card stacking */
+  main div[class*="p-4 rounded-xl bg-slate-900"],
+  main div[class*="border border-amber-500"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    gap: 12px !important;
+    padding: 1rem !important;
+  }
+
+  /* Force text wrapping across all elements */
+  h1, h2, h3, h4, p, span, strong, label, input, button, a {
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    max-width: 100% !important;
   }
 
   .grid,
@@ -250,33 +315,8 @@ html.focus-assist .content-layer > footer:hover {
     width: 100% !important;
   }
 
-  /* Rule 2: Action Buttons Vertical Stacking */
-  .result-action-btns,
-  div:has(> button:contains("Download PDF")),
-  main .bg-slate-900 > div.flex.items-center.gap-3 {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    gap: 10px !important;
-    margin-top: 0.5rem !important;
-  }
-
-  .result-action-btns button,
-  .result-action-btns a,
-  main .bg-slate-900 > div.flex.items-center.gap-3 button,
-  main .bg-slate-900 > div.flex.items-center.gap-3 a {
-    width: 100% !important;
-    min-width: 100% !important;
-    box-sizing: border-box !important;
-    justify-content: center !important;
-    text-align: center !important;
-    padding: 0.85rem 1rem !important;
-    font-size: 0.85rem !important;
-  }
-
-  /* Rule 3: Main Page Bottom Padding (110px) to prevent bottom collision */
   main {
-    padding-bottom: 110px !important;
+    padding-bottom: 120px !important;
     overflow-y: auto !important;
   }
 }
