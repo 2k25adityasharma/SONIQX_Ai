@@ -151,3 +151,51 @@ html.focus-assist .content-layer > footer:hover {
   }
 }
 
+/* ==========================================================================
+   DR. AUDIO AI FLOATING CHATBOT RESPONSIVE & FIXED BOTTOM STYLING
+   ========================================================================== */
+aside[aria-label="SONIQX AI Companion"],
+aside.fixed,
+.fixed.bottom-4.right-4 {
+  position: fixed !important;
+  bottom: 0.75rem !important;
+  right: 0.75rem !important;
+  z-index: 99999 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  transition: all 0.25s ease !important;
+}
+
+@media (max-width: 640px) {
+  aside[aria-label="SONIQX AI Companion"],
+  aside.fixed,
+  .fixed.bottom-4.right-4 {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: calc(100vw - 1rem) !important;
+    max-width: 420px !important;
+    bottom: 0.5rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  aside[aria-label="SONIQX AI Companion"] > div {
+    border-radius: 12px !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  aside[aria-label="SONIQX AI Companion"] input {
+    font-size: 13px !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  aside[aria-label="SONIQX AI Companion"] button {
+    touch-action: manipulation;
+  }
+}
+
+
