@@ -176,7 +176,18 @@ module.exports = async function handler(req, res) {
             });
         }
 
-        const activeApiKey = process.env.AI_API_KEY || process.env.GEMINI_API_KEY || "";
+        const activeApiKey = 
+            process.env.VITE_GEMINI_API_KEY || 
+            process.env.VITE_AI_API_KEY || 
+            process.env.AI_API_KEY || 
+            process.env.GEMINI_API_KEY || 
+            process.env.NEXT_PUBLIC_GEMINI_API_KEY || 
+            process.env.REACT_APP_GEMINI_API_KEY || 
+            "";
+
+        if (!activeApiKey) {
+            console.error("[SONIQX AI] CRITICAL: Gemini API Key is missing/undefined in production build!");
+        }
         let aiAnswer = '';
 
         if (activeApiKey) {

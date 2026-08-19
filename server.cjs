@@ -276,7 +276,19 @@ const server = http.createServer(async (req, res) => {
                 }
 
                 const config = getSMTPConfig();
-                const activeApiKey = process.env.AI_API_KEY || process.env.GEMINI_API_KEY || config.ai_api_key || "";
+                const activeApiKey = 
+                    process.env.VITE_GEMINI_API_KEY || 
+                    process.env.VITE_AI_API_KEY || 
+                    process.env.AI_API_KEY || 
+                    process.env.GEMINI_API_KEY || 
+                    process.env.NEXT_PUBLIC_GEMINI_API_KEY || 
+                    process.env.REACT_APP_GEMINI_API_KEY || 
+                    config.ai_api_key || 
+                    "";
+
+                if (!activeApiKey) {
+                    console.error("[SONIQX AI] CRITICAL: Gemini API Key is missing/undefined in server environment!");
+                }
 
                 let aiAnswer = '';
 
