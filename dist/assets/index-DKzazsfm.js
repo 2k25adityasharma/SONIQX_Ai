@@ -77,27 +77,54 @@ Error generating stack: `+a.message+`
     if(!qStr) return t === 'hi' ? "कृपया सुनवाई से संबंधित प्रश्न पूछें।" : "Please ask a hearing-related question.";
     
     const qLower = qStr.toLowerCase();
-    const audiologyKeywords = ['hear', 'ear', 'ears', 'audiology', 'audiometer', 'audiogram', 'sound', 'decibel', 'db', 'frequency', 'hz', 'pitch', 'headphone', 'earphone', 'volume', 'tinnitus', 'ringing', 'noise', 'deaf', 'presbycusis', 'ent', 'otology', 'wax', 'earwax', 'test', 'screening', 'doctor', 'report', 'pdf', 'privacy', 'private', 'data', 'safe', '60/60', 'protection', 'aid', 'loss', 'chart', 'graph', 'curve', 'सुनवाई', 'कान', 'हेडफोन', 'आवाज', 'फ्रीक्वेंसी', 'टेस्ट', 'डेटा', 'सुरक्षित', 'काम करता', 'जरूरी', 'मतलब', 'prueba', 'datos', 'auriculares', 'frecuencia', 'oído'];
-    const isAudiology = audiologyKeywords.some(kw => qLower.includes(kw));
-    
-    const offTopicKeywords = ['python', 'java', 'c++', 'code', 'coding', 'program', 'script', 'snake game', 'virat', 'kohli', 'cricket', 'football', 'messi', 'ronaldo', 'weather', 'temp', 'joke', 'pasta', 'cook', 'recipe', 'math', 'mathematics', 'algebra', 'calculus', 'president', 'capital of', 'movie', 'song', 'history', 'who is', 'how to make', 'game'];
-    const isExplicitOffTopic = offTopicKeywords.some(kw => qLower.includes(kw));
-    
-    const offTopicMsg = t === 'hi' 
-        ? "मैं सॉनिक एआई हूं, सुनवाई और ऑडियोलॉजी पर केंद्रित हूं। कृपया सुनवाई से संबंधित प्रश्न पूछें।"
-        : t === 'es'
-        ? "Soy Soniq AI, centrado en la audición y audiología. Por favor haga una pregunta relacionada con la audición."
-        : "I’m Soniq AI, focused on hearing and audiology. Please ask a hearing-related question.";
 
-    if (isExplicitOffTopic || (!isAudiology && qLower.length > 3 && !qLower.includes('how') && !qLower.includes('why') && !qLower.includes('what') && !qLower.includes('कैसे') && !qLower.includes('क्यों') && !qLower.includes('क्या'))) {
-        return offTopicMsg;
+    // 1. PRIORITIZE PREDEFINED Q&A LOOKUP BEFORE GEMINI API
+    if (qLower.includes('care') || qLower.includes('protect') || qLower.includes('clean') || qLower.includes('hygiene') || qLower.includes('taking care') || qLower.includes('take care') || qLower.includes('देखभाल') || qLower.includes('सफाई') || qLower.includes('सुरक्षा') || qLower.includes('cuidado') || qLower.includes('soin')) {
+        if (qLower.includes('ear') || qLower.includes('ears') || qLower.includes('hearing') || qLower.includes('कान') || qLower.includes('सुनना') || qLower.includes('oído')) {
+            return t === 'hi'
+                ? "• 60/60 सुरक्षा नियम: वॉल्यूम 60% से कम रखें और 60 मिनट बाद ब्रेक लें।\n• कानों में कॉटन बड्स या नुकीली चीजें न डालें; कान प्राकृतिक रूप से साफ होते हैं।\n• तेज शोर (>85 dB) वाले स्थानों पर ईयरप्लग पहनें।"
+                : "• 60/60 Safe Listening Rule: Keep headphone volume under 60% and pause every 60 minutes.\n• Avoid cotton swabs or sharp objects inside ear canals; ears self-clean naturally.\n• Wear earplugs in environments louder than 85 dB.";
+        }
+    }
+    if (qLower.includes('how does') || qLower.includes('how test') || (qLower.includes('work') && qLower.includes('test')) || qLower.includes('काम करता') || qLower.includes('कैसे काम') || qLower.includes('funciona la prueba')) {
+        return t === 'hi'
+            ? "डिजिटल प्योर-टोन ऑडियोमेट्री आपके हेडफोन में 500Hz-8000Hz आवृत्तियों पर आवाज बजाती है। जब भी आपको आवाज सुनाई दे, बटन दबाएं ताकि आपकी सुनने की क्षमता रिकॉर्ड हो सके।"
+            : "Digital pure-tone audiometry plays calibrated sound tones across 500Hz-8000Hz speech frequencies into your headphones. Press the button whenever you hear a tone to record your hearing threshold across pitch ranges.";
+    }
+    if ((qLower.includes('why') && (qLower.includes('headphone') || qLower.includes('earphone') || qLower.includes('wear') || qLower.includes('put on'))) || qLower.includes('हेडफोन') || qLower.includes('क्यों जरूरी') || qLower.includes('ponerse auriculares')) {
+        return t === 'hi'
+            ? "हेडफोन दोनों कानों (Left & Right) की अलग-अलग जांच करते हैं ताकि आवाज केवल एक कान में जाए और सटीक नतीजे प्राप्त हों।"
+            : "Headphones isolate your left and right ears so calibrated sound tones are tested independently in one ear at a time without sound leakage or room noise interference.";
+    }
+    if (qLower.includes('privacy') || qLower.includes('private') || qLower.includes('data') || qLower.includes('सुरक्षित') || qLower.includes('डेटा') || qLower.includes('datos son privados')) {
+        return t === 'hi'
+            ? "आपकी सुनवाई जांच के परिणाम और आंकड़े 100% निजी, एन्क्रिप्टेड और केवल आपके डिवाइस पर ही सुरक्षित रहते हैं।"
+            : "Your hearing screening results and test data are 100% private, securely encrypted, and saved locally on your device storage.";
+    }
+    if (qLower.includes('frequency') || qLower.includes('frequencies') || qLower.includes('hz') || qLower.includes('फ्रीक्वेंसी') || qLower.includes('मतलब') || qLower.includes('frecuencias')) {
+        return t === 'hi'
+            ? "हर्ट्ज (Hz) में मापी गई फ्रीक्वेंसी आवाज की पिच दर्शाती है (500Hz बेस से 8000Hz ट्रेबल)। विभिन्न फ्रीक्वेंसी की जांच से आपकी सुनने की क्षमता का सटीक पता चलता है।"
+            : "Frequencies in Hertz (Hz) measure sound pitch from low bass (500Hz) to high treble (8000Hz). Screening across frequencies evaluates your hearing sensitivity across speech range.";
+    }
+    if (qLower === 'ear' || qLower === 'ears' || qLower === 'hearing' || qLower === 'audiogram' || qLower === 'कान' || qLower === 'सुनना') {
+        return t === 'hi'
+            ? "मानव कान ध्वनि तरंगों को कंपन में बदलकर मस्तिष्क तक सिग्नल भेजता है। नियमित रूप से सुनवाई जांच करें और 60% वॉल्यूम सीमा का पालन करें।"
+            : "The human ear converts sound vibrations into neurological signals for the brain. Perform regular pure-tone screening and maintain safe volume levels under 60%.";
     }
 
+    const offTopicKeywords = ['weather', 'recipe', 'cooking', 'crypto', 'bitcoin', 'football', 'cricket', 'movie', 'actor', 'politics', 'president', 'prime minister', 'code in python', 'javascript tutorial', 'मौसम', 'रेसिपी', 'क्रिकेट', 'फिल्म', 'राजनीति'];
+    if (offTopicKeywords.some(k => qLower.includes(k))) {
+        return t === 'hi'
+            ? "मैं SONIQX Dr. Audio AI हूँ। मैं केवल सुनवाई स्वास्थ्य, ऑडियोलॉजी, और टेस्ट से संबंधित प्रश्नों के उत्तर देता हूँ।"
+            : "I'm Dr. Audio AI for SONIQX, focused on hearing health, audiology, and screening tests. Please ask a hearing-related question.";
+    }
+
+    // 2. GEMINI API FALLBACK
     try {
         const res = await fetch("/api/ai-chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ question: qStr, mode: r, language: t })
+            body: JSON.stringify({ question: qStr, mode: r, language: t, maxOutputTokens: 150 })
         });
         const data = await res.json().catch(() => null);
         if (res.ok && data && data.success && data.answer) {
@@ -107,25 +134,9 @@ Error generating stack: `+a.message+`
         console.error("[Soniq AI Frontend Error]", e);
     }
 
-    if (isExplicitOffTopic) return offTopicMsg;
-
-    if (qLower.includes('how does') || qLower.includes('how test') || (qLower.includes('work') && qLower.includes('test')) || qLower.includes('काम करता') || qLower.includes('कैसे काम') || qLower.includes('funciona la prueba')) {
-        return t === 'hi' ? "डिजिटल प्यूर-टोन ऑडियोमेट्री आपके हेडफोन में 500Hz-8000Hz आवृत्तियों पर आवाज बजाती है। जब भी आपको आवाज सुनाई दे, बटन दबाएं।" : "Digital pure-tone audiometry plays calibrated sound tones across 500Hz-8000Hz speech frequencies into your headphones. You press the button whenever you hear a tone to record your auditory threshold.";
-    }
-    if ((qLower.includes('why') && (qLower.includes('headphone') || qLower.includes('earphone') || qLower.includes('wear'))) || qLower.includes('हेडफोन') || qLower.includes('क्यों जरूरी') || qLower.includes('ponerse auriculares')) {
-        return t === 'hi' ? "हेडफोन दोनों कानों को अलग-अलग जांचते हैं ताकि एक कान की आवाज दूसरे कान में न जाए और सही परीक्षण हो सके।" : "Headphones isolate left and right ears so sounds are delivered to one ear at a time without sound leaking, allowing accurate threshold measurement for each ear.";
-    }
-    if (qLower.includes('privacy') || qLower.includes('private') || qLower.includes('data') || qLower.includes('सुरक्षित') || qLower.includes('डेटा') || qLower.includes('datos son privados')) {
-        return t === 'hi' ? "आपकी सुनवाई जांच के परिणाम और डेटा 100% निजी, एन्क्रिप्टेड और आपके डिवाइस पर सुरक्षित रहते हैं।" : "Your hearing screening results and test data are 100% private, securely encrypted, and stored locally on your device.";
-    }
-    if (qLower.includes('frequency') || qLower.includes('frequencies') || qLower.includes('hz') || qLower.includes('फ्रीक्वेंसी') || qLower.includes('मतलब') || qLower.includes('frecuencias')) {
-        return t === 'hi' ? "हर्ट्ज (Hz) में मापी गई फ्रीक्वेंसी ध्वनि के तारत्व को दर्शाती है (500Hz से 8000Hz), जो यह बताती है कि आप अलग-अलग आवाजें कितनी अच्छी तरह सुनते हैं।" : "Frequencies measured in Hertz (Hz) represent sound pitch from low bass (500Hz) to high treble (8000Hz), evaluating how well you hear speech pitch.";
-    }
-    if (qLower === 'ear' || qLower === 'ears' || qLower.includes('ear anatomy') || qLower.includes('ear health') || qLower.includes('कान')) {
-        return t === 'hi' ? "मानव कान के तीन मुख्य भाग होते हैं: बाहरी, मध्य और आंतरिक कान। यह ध्वनि तरंगों को कंपन में बदलकर मस्तिष्क तक संदेश भेजता है।" : "The human ear consists of three main parts: outer, middle, and inner ear. It collects sound waves, converts them into vibrations, and sends signals to the brain for hearing.";
-    }
-
-    return t === 'hi' ? "कृपया सुनवाई, कान के स्वास्थ्य, हेडफोन या ऑडियोग्राम से संबंधित कोई विशिष्ट प्रश्न पूछें।" : "Please ask any specific question about hearing, ear health, audiograms, headphones, or sound frequencies.";
+    return t === 'hi'
+        ? "कृपया सुनवाई, कान के स्वास्थ्य, हेडफोन या ऑडियोग्राम से संबंधित कोई विशिष्ट प्रश्न पूछें।"
+        : "Please ask any specific question about hearing, ear health, audiograms, headphones, or sound frequencies.";
 },M=()=>b(!0),$=()=>b(!1),E=()=>{v(!0),sessionStorage.setItem("sh_headphone_confirmed","true")};return p.jsx(WL.Provider,{value:{language:t,setLanguage:n,mode:r,setMode:i,theme:a,setTheme:o,toggleTheme:P,detectModeFromAge:y,userProfile:f,setUserProfile:h,loginUser:S,logoutUser:A,t:_,speak:R,stopSpeaking:L,isSpeaking:s,generateAIAnswer:T,isHeadphoneConfirmed:d,isHeadphoneModalOpen:x,openHeadphoneModal:M,closeHeadphoneModal:$,confirmHeadphones:E},children:e})}function vi(){const e=k.useContext(WL);if(!e)throw new Error("useLanguageAndMode must be used within a LanguageAndModeProvider");return e}/**
  * @license lucide-react v1.31.0 - ISC
  *
