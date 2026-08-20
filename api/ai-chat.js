@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
-  // 1. Universal CORS Headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  // 1. Set Universal CORS Headers
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // Get API Key from any possible ENV name
+    // Retrieve API Key
     const apiKey = 
       process.env.GEMINI_API_KEY || 
       process.env.AI_API_KEY || 
@@ -48,11 +48,11 @@ export default async function handler(req, res) {
     if (!apiKey) {
       return res.status(200).json({ 
         success: true, 
-        answer: 'API Key is missing in Vercel Environment Variables.' 
+        answer: 'Server Error: API Key is missing in Vercel Environment Variables.' 
       });
     }
 
-    // Direct REST Call to Google Gemini
+    // Direct REST Endpoint for Gemini
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(geminiUrl, {
@@ -78,7 +78,7 @@ export default async function handler(req, res) {
     if (data.error) {
       return res.status(200).json({ 
         success: true, 
-        answer: `Gemini API Error: ${data.error.message || 'Key or Model issue'}` 
+        answer: `Gemini API Error: ${data.error.message || 'Invalid API Key or Model Name'}` 
       });
     }
 
@@ -90,7 +90,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    // Prevent 500 status code crash, return error message inside 200 JSON
+    // Return error message in JSON payload to avoid HTTP 500 crash
     return res.status(200).json({ 
       success: false, 
       answer: `Server Exception: ${error.message}` 
