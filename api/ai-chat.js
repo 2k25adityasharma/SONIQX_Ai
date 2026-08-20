@@ -76,65 +76,54 @@ function getPredefinedAnswer(qStr, lang) {
     const q = qStr.toLowerCase().trim();
     const l = (lang && SMART_AUDIOLOGY_FALLBACKS.sound[lang]) ? lang : 'en';
 
-    // 1. Off-topic check
+    // Off-topic check
     const offTopicKeywords = ['weather', 'recipe', 'cooking', 'crypto', 'bitcoin', 'football', 'cricket', 'movie', 'actor', 'politics', 'president', 'prime minister', 'code in python', 'javascript tutorial', 'मौसम', 'रेसिपी', 'क्रिकेट', 'फिल्म', 'राजनीति'];
     if (offTopicKeywords.some(k => q.includes(k))) {
         return OFF_TOPIC_MESSAGES[l] || OFF_TOPIC_MESSAGES.en;
     }
 
-    // 2. Sound / Audio / Pitch / Volume / Tone
     if (q === 'sound' || q.includes('sound') || q.includes('ध्वनि') || q.includes('आवाज') || q.includes('sonido') || q.includes('son')) {
         if (!q.includes('test') && !q.includes('work') && !q.includes('care') && !q.includes('clean')) {
             return SMART_AUDIOLOGY_FALLBACKS.sound[l] || SMART_AUDIOLOGY_FALLBACKS.sound.en;
         }
     }
 
-    // 3. Tinnitus / Ringing
     if (q.includes('tinnitus') || q.includes('ringing') || q.includes('buzzing') || q.includes('सीटी') || q.includes('सनसनाहट')) {
         return SMART_AUDIOLOGY_FALLBACKS.tinnitus[l] || SMART_AUDIOLOGY_FALLBACKS.tinnitus.en;
     }
 
-    // 4. Decibel / dB
     if (q === 'db' || q.includes('decibel') || q.includes('loudness') || q.includes('डेसिबल')) {
         return SMART_AUDIOLOGY_FALLBACKS.decibel[l] || SMART_AUDIOLOGY_FALLBACKS.decibel.en;
     }
 
-    // 5. Hearing loss / Deafness
     if (q.includes('loss') || q.includes('deaf') || q.includes('बहरापन') || q.includes('कम सुनना')) {
         return SMART_AUDIOLOGY_FALLBACKS.hearing_loss[l] || SMART_AUDIOLOGY_FALLBACKS.hearing_loss.en;
     }
 
-    // 6. Audiogram / Chart / Graph
     if (q.includes('audiogram') || q.includes('chart') || q.includes('graph') || q.includes('ऑडियोग्राम')) {
         return SMART_AUDIOLOGY_FALLBACKS.audiogram[l] || SMART_AUDIOLOGY_FALLBACKS.audiogram.en;
     }
 
-    // 7. Ear Care / Protection / Cleaning / Hygiene
     if (q.includes('care') || q.includes('protect') || q.includes('clean') || q.includes('hygiene') || q.includes('taking care') || q.includes('take care') || q.includes('देखभाल') || q.includes('सफाई') || q.includes('सुरक्षा') || q.includes('cuidado') || q.includes('soin')) {
         return SMART_AUDIOLOGY_FALLBACKS.ear_care[l] || SMART_AUDIOLOGY_FALLBACKS.ear_care.en;
     }
 
-    // 8. How the test works / Procedure / Audiometry
     if (q.includes('work') || q.includes('how test') || q.includes('how does') || q.includes('procedure') || q.includes('काम') || q.includes('कैसे') || q.includes('funciona') || q.includes('fonctionne')) {
         return SMART_AUDIOLOGY_FALLBACKS.how_it_works[l] || SMART_AUDIOLOGY_FALLBACKS.how_it_works.en;
     }
 
-    // 9. Headphones / Earphones
     if (q.includes('headphone') || q.includes('headphones') || q.includes('earphone') || q.includes('earphones') || q.includes('why wear') || q.includes('why headphone') || q.includes('हेडफोन') || q.includes('क्यों') || q.includes('auriculares') || q.includes('casque')) {
         return SMART_AUDIOLOGY_FALLBACKS.headphones[l] || SMART_AUDIOLOGY_FALLBACKS.headphones.en;
     }
 
-    // 10. Frequencies / Hz / Pitch / Hertz
     if (q.includes('frequency') || q.includes('frequencies') || q.includes('hz') || q.includes('hertz') || q.includes('pitch') || q.includes('फ्रीक्वेंसी') || q.includes('हर्ट्ज') || q.includes('frecuencia') || q.includes('fréquence')) {
         return SMART_AUDIOLOGY_FALLBACKS.frequencies[l] || SMART_AUDIOLOGY_FALLBACKS.frequencies.en;
     }
 
-    // 11. Privacy / Data Security
     if (q.includes('privacy') || q.includes('private') || q.includes('data') || q.includes('secure') || q.includes('सुरक्षित') || q.includes('डेटा') || q.includes('गोपनीय') || q.includes('privado')) {
         return SMART_AUDIOLOGY_FALLBACKS.privacy[l] || SMART_AUDIOLOGY_FALLBACKS.privacy.en;
     }
 
-    // 12. Single-word / General Ear inquiry
     if (q === 'ear' || q === 'ears' || q === 'hearing' || q === 'कान' || q === 'सुनना' || q === 'oído') {
         return SMART_AUDIOLOGY_FALLBACKS.ear[l] || SMART_AUDIOLOGY_FALLBACKS.ear.en;
     }
@@ -171,16 +160,6 @@ module.exports = async function handler(req, res) {
             });
         }
 
-        // 1. PRIORITIZE PREDEFINED Q&A LOOKUP BEFORE GEMINI API
-        const predefined = getPredefinedAnswer(cleanQ, validLang);
-        if (predefined) {
-            return res.status(200).json({
-                success: true,
-                answer: predefined,
-                source: 'predefined'
-            });
-        }
-
         const activeApiKey = 
             process.env.VITE_GEMINI_API_KEY || 
             process.env.VITE_AI_API_KEY || 
@@ -192,9 +171,11 @@ module.exports = async function handler(req, res) {
 
         let aiAnswer = '';
 
+        // TRY GEMINI API FIRST
         if (activeApiKey) {
             try {
-                const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${activeApiKey}`;
+                // FIXED MODEL NAME TO gemini-1.5-flash
+                const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeApiKey}`;
                 const systemInstructionText = `You are Dr. Audio AI for SONIQX digital audiology.
 
 You strictly answer questions about hearing health, audiology, pure-tone audiometry, headphones, and ear care.
@@ -230,7 +211,7 @@ Answer strictly in ${targetLangName} (${validLang}).`;
             }
         }
 
-        // 2. SMART RATE-LIMIT & QUOTA EXCEEDED FALLBACK
+        // FALLBACK ONLY IF GEMINI API FAILS OR KEY IS MISSING
         if (!aiAnswer) {
             aiAnswer = getPredefinedAnswer(cleanQ, validLang) || SMART_AUDIOLOGY_FALLBACKS.default_fallback[validLang] || SMART_AUDIOLOGY_FALLBACKS.default_fallback.en;
         }
@@ -240,7 +221,7 @@ Answer strictly in ${targetLangName} (${validLang}).`;
             answer: aiAnswer,
             mode: mode,
             language: validLang,
-            source: activeApiKey ? 'gemini_api' : 'offline_fallback'
+            source: aiAnswer && activeApiKey ? 'gemini_api' : 'offline_fallback'
         });
     } catch (err) {
         console.error('[Vercel Serverless SONIQX AI Error]', err.message);
